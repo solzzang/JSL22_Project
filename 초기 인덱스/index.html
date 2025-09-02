@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>안전내비 - 재난 정보 지도 서비스</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="mystyle.css">
+</head>
+<body>
+    <div class="page-wrapper">
+        
+        <header class="header">
+            <div class="logo"><a href="#">안전내비</a></div>
+            
+            <nav>
+                <a href="#" class="active">지도</a>
+                <a href="#">재난지침</a>
+                <a href="#">커뮤니티</a>
+                <a href="#">마이페이지</a>
+            </nav>
+            
+            <div class="user-options">
+                <select class="lang-select">
+                    <option>한국어</option><option>English</option><option>日本語</option>
+                </select>
+                <a href="#">로그인</a>
+                <a href="#">회원가입</a>
+            </div>
+        </header>
+
+        <div class="main-content">
+            
+            <aside class="sidebar">
+                <h2 class="sidebar-title">지도 필터</h2>
+                <div class="filter-group">
+                    <label><input type="checkbox" checked> 날씨 정보</label>
+                    <label><input type="checkbox" checked> 재난 정보</label>
+                    <label><input type="checkbox"> 대피소 정보</label>
+                    <label><input type="checkbox"> 병원 정보</label>
+                </div>
+            </aside>
+
+            <main class="content-area">
+                <section class="map-section">
+                    <div class="placeholder">
+                        <h3>🗺️ 지도 표시 영역</h3>
+                        <p>선택한 필터의 정보가 지도에 표시됩니다.</p>
+                    </div>
+                </section>
+
+                <h2 class="section-title">현재 지역 상세 정보</h2>
+                <div class="card-list">
+                    <a href="#">
+                        <div class="card-icon">🗺️</div>
+                        <div class="card-content">
+                            <h4>주변 대피소 목록</h4>
+                            <p>현재 위치에서 가장 가까운 대피소를 확인하고 경로를 안내합니다.</p>
+                        </div>
+                        <div class="card-arrow">&gt;</div>
+                    </a>
+                    <a href="#">
+                        <div class="card-icon">📰</div>
+                        <div class="card-content">
+                            <h4>최신 재난 뉴스</h4>
+                            <p>현재 지역과 관련된 최신 재난 속보 및 안전 문자를 확인합니다.</p>
+                        </div>
+                        <div class="card-arrow">&gt;</div>
+                    </a>
+                    <a href="#">
+                        <div class="card-icon">🎒</div>
+                        <div class="card-content">
+                            <h4>상황별 행동 요령</h4>
+                            <p>지진, 태풍, 화재 등 현재 상황에 맞는 행동 요령을 안내합니다.</p>
+                        </div>
+                        <div class="card-arrow">&gt;</div>
+                    </a>
+                </div>
+            </main>
+        </div>
+
+        <footer class="footer">
+            <div>
+                <a href="#">서비스 소개</a>
+                <a href="#">이용약관</a>
+            </div>
+            <div class="emergency-contacts">
+                <strong>비상 연락처:</strong>
+                <span>경찰 112</span>
+                <span>소방·구급 119</span>
+                <span>병원 119</span>
+            </div>
+        </footer>
+
+    </div>
+</body>
+</html>
