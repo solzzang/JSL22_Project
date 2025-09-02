@@ -1,0 +1,167 @@
+@charset "UTF-8";
+
+:root {
+            --main-red: #E60012;
+            --bg-color: #F5F6F8;
+            --text-color: #222222;
+            --subtle-text-color: #666666;
+            --border-color: #EAEAEA;
+            --white-color: #FFFFFF;
+        }
+
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+        }
+
+        .page-wrapper {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        /* --- 헤더 --- */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 30px;
+            background-color: var(--white-color);
+            border-bottom: 1px solid var(--border-color);
+            flex-shrink: 0;
+            height: 64px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            position: relative;
+            z-index: 10;
+        }
+        .header .logo a {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--main-red);
+            text-decoration: none;
+        }
+        .header nav { display: flex; gap: 25px; }
+        .header nav a {
+            font-size: 16px;
+            font-weight: 500;
+            color: var(--subtle-text-color);
+            text-decoration: none;
+            padding: 20px 5px;
+            border-bottom: 2px solid transparent;
+            transition: color 0.2s, border-color 0.2s;
+        }
+        .header nav a.active, .header nav a:hover {
+            color: var(--text-color);
+            border-bottom: 2px solid var(--main-red);
+        }
+        .header .user-options { display: flex; align-items: center; gap: 15px; }
+        .header .user-options a { font-size: 14px; color: var(--subtle-text-color); text-decoration: none; }
+        .header .user-options a:hover { color: var(--main-red); }
+
+        /* --- 메인 컨텐츠 영역 --- */
+        .main-content {
+            display: flex;
+            flex-grow: 1;
+            overflow: hidden;
+        }
+
+        /* --- 사이드바 --- */
+        .sidebar {
+            width: 300px;
+            background-color: var(--white-color);
+            border-right: 1px solid var(--border-color);
+            flex-shrink: 0;
+            padding: 25px;
+            overflow-y: auto;
+        }
+        .sidebar-title {
+            font-size: 20px;
+            font-weight: 700;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--main-red);
+            margin: 0 0 25px 0;
+        }
+        .filter-group label {
+            display: flex;
+            align-items: center;
+            font-size: 16px;
+            cursor: pointer;
+            margin-bottom: 18px;
+        }
+        .filter-group input[type="checkbox"] {
+            margin-right: 12px;
+            width: 18px;
+            height: 18px;
+            accent-color: var(--main-red);
+        }
+
+        /* --- 본문 (지도 + 카드) --- */
+        .content-area {
+            flex-grow: 1;
+            padding: 30px;
+            overflow-y: auto;
+        }
+
+        .map-section {
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            height: 400px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #E9ECEF;
+            margin-bottom: 30px;
+        }
+        .map-section .placeholder { text-align: center; color: var(--subtle-text-color); }
+        .map-section .placeholder h3 { font-size: 24px; margin: 0 0 10px; }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 700;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--main-red);
+            margin-bottom: 20px;
+        }
+
+        /* 카드 리스트 스타일 (bosaiguide.jp) */
+        .card-list a {
+            display: flex;
+            align-items: center;
+            background-color: var(--white-color);
+            padding: 20px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            margin-bottom: 15px;
+            text-decoration: none;
+            color: var(--text-color);
+            transition: box-shadow 0.2s ease, transform 0.2s ease;
+        }
+        .card-list a:hover {
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+        }
+        .card-icon { font-size: 32px; margin-right: 20px; width: 40px; text-align: center; }
+        .card-content { flex-grow: 1; }
+        .card-content h4 { margin: 0 0 5px; font-size: 18px; font-weight: 700; }
+        .card-content p { margin: 0; font-size: 14px; color: var(--subtle-text-color); }
+        .card-arrow { font-size: 24px; font-weight: bold; color: #D0D0D0; }
+
+        /* --- 푸터 --- */
+        .footer {
+            background-color: #343A40;
+            color: #ADB5BD;
+            padding: 20px 30px;
+            font-size: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+            border-top: 1px solid #495057;
+        }
+        .footer a { color: #ADB5BD; text-decoration: none; margin-right: 20px; }
+        .footer a:hover { color: var(--white-color); }
+        .footer .emergency-contacts span { margin-left: 15px; font-weight: 500; color: #F8F9FA; }
