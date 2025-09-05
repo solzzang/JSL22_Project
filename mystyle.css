@@ -520,3 +520,94 @@ html, body {
         display: none; /* '관리' 라벨은 숨김 */
     }
 }
+/* ===== 로그인 ===== */
+.auth-wrap{display:flex;justify-content:center}
+.form-card{
+  background:var(--white-color);
+  border:1px solid var(--border-color);
+  border-radius:12px;
+  padding:28px;
+  max-width:420px;width:100%;
+  box-shadow:0 6px 18px rgba(0,0,0,.06)
+}
+.form-title{margin:0 0 18px;font-size:18px;font-weight:700}
+.form-error{
+  margin:0 0 12px;padding:10px 12px;border-radius:8px;
+  background:#fff1f2;border:1px solid #fecdd3;color:#b42318;font-size:14px
+}
+.form-field{display:flex;flex-direction:column;gap:8px;margin-bottom:14px}
+.form-field label{font-size:14px;color:var(--subtle-text-color)}
+.form-field input{
+  padding:12px 14px;border:1px solid var(--border-color);border-radius:8px;
+  background:#fff;font-size:15px;color:var(--text-color);
+  outline:none;transition:border-color .2s, box-shadow .2s
+}
+.form-field input:focus{
+  border-color:var(--main-red);
+  box-shadow:0 0 0 4px rgba(230,0,18,.08)
+}
+.btn-primary,
+.btn-outline {
+  box-sizing: border-box;      
+}
+.btn-primary.w-100,
+.btn-outline.w-100 {
+  display: flex;                 /* block 대신 flex */
+  justify-content: center;       /* 가로 중앙 */
+  align-items: center;           /* 세로 중앙 */
+  width: 100%;
+  height: 44px;                  /* 버튼 높이 고정 */
+  margin-left: 0;
+  margin-right: 0;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  box-sizing: border-box; 
+}
+.btn-primary{
+  display:inline-flex;justify-content:center;align-items:center;
+  height:44px;padding:0 16px;border:none;border-radius:10px;
+  background:var(--main-red);color:#fff;font-weight:700;cursor:pointer;
+  transition:filter .2s, transform .02s
+}
+.btn-primary:hover{filter:brightness(.94)}
+.btn-primary:active{transform:translateY(1px)}
+.btn-outline{
+  display:inline-flex;justify-content:center;align-items:center;
+  height:44px;padding:0 16px;border:1px solid var(--border-color);
+  border-radius:10px;background:transparent;color:var(--text-color);
+  text-decoration:none;transition:box-shadow .2s, border-color .2s
+}
+.btn-outline:hover{border-color:#d0d0d0;box-shadow:0 1px 6px rgba(0,0,0,.06)}
+.w-100{width:100%}
+.form-meta{display:flex;justify-content:space-between;align-items:center;margin-top:10px;font-size:13px}
+.form-meta .link{color:var(--subtle-text-color);text-decoration:none}
+.form-meta .link:hover{color:var(--main-red)}
+.remember input{margin-right:6px}
+.divider{display:flex;align-items:center;gap:12px;margin:16px 0}
+.divider::before,.divider::after{content:"";flex:1;height:1px;background:var(--border-color)}
+.divider span{font-size:12px;color:var(--subtle-text-color)}
+
+@media (max-width:576px){
+  .content-area{padding:20px}
+  .form-card{padding:20px}
+}
+
+/* ===== 회원가입 ===== */
+.req{color:var(--main-red)}
+.hint{font-size:12px;color:var(--subtle-text-color)}
+.inline-field{display:flex;gap:10px;align-items:center}
+.inline-field input{flex:1}
+.checkbox{display:flex;align-items:center;gap:10px;margin:6px 0}
+.checkbox input{width:16px;height:16px;accent-color:var(--main-red)}
+.tos-links{margin-top:6px}
+.tos-links a{color:var(--subtle-text-color);text-decoration:none}
+.tos-links a:hover{color:var(--main-red)}
+.tos-links .sep{margin:0 6px;color:#c2c2c2}
+.section-title {
+  font-size: 20px;
+  font-weight: 700;
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--main-red);
+  margin-bottom: 20px;
+  text-align: center; 
+}
