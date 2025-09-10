@@ -9,7 +9,7 @@
 			<aside class="sidebar">
 				<h2 class="sidebar-title">カテゴリー</h2>
 				<div class="filter-group">
-					<label><input type="checkbox"> 天気情報</label> <label><input
+					<label><input type="checkbox" id="weatherToggle"> 天気情報</label> <label><input
 						type="checkbox"> 災害情報</label> <label><input
 						type="checkbox"> 避難所情報</label> <label><input
 						type="checkbox"> 病院情報</label>
@@ -53,57 +53,21 @@
 </div>
 
 <th:block layout:fragment="script">
+	<script>
+	  const toggle = document.getElementById('weatherToggle');
+	  let map; 
+	  toggle.addEventListener('change', () => {
+	    if (toggle.checked) {
+	      WeatherFeature.enable(window._map);
+	    } else {
+	      WeatherFeature.disable();
+	    }
+	  });
+	</script>
+	<script src="/js/index/weather.js"></script>
 	<script
-	  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBdiJWNOl98gTR6XjCfDhubMwXQZVO3ejs&callback=initMap"
+	  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBdiJWNOl98gTR6XjCfDhubMwXQZVO3ejs&callback=initMap&libraries=marker&v=weekly"
 	  async defer>
 	</script>
-	<script>
-	    // 날씨 코드 → 아이콘 매핑
-	    function getWeatherIcon(code) {
-	      if (code.includes("晴")) return "☀️";
-	      if (code.includes("くもり")) return "⛅";
-	      if (code.includes("雨")) return "🌧️";
-	      if (code.includes("雷")) return "⛈️";
-	      if (code.includes("雪")) return "❄️";
-	      return "❓";
-	    }
-	
-	    async function fetchWeather(lat, lon) {
-	      const url = "https://www.jma.go.jp/bosai/forecast/data/forecast/130000.json";
-	      const res = await fetch(url);
-	      const data = await res.json();
-	
-	      // 단순히 현재 날씨와 기온 추출
-	      const weather = data[0].timeSeries[0].areas[0].weathers[0];
-	      const temp = data[0].timeSeries[2].areas[0].temps[0];
-	
-	      return { weather, temp };
-	    }
-	
-	    async function initMap() {
-	      const tokyo = { lat: 35.6812, lng: 139.7671 };
-	
-	      const map = new google.maps.Map(document.getElementById("map"), {
-	        center: tokyo,
-	        zoom: 8
-	      });
-	
-	      // 날씨 정보 가져오기
-	      const { weather, temp } = await fetchWeather(tokyo.lat, tokyo.lng);
-	      const icon = getWeatherIcon(weather);
-	
-	      // 지도에 마커 생성 (아이콘 + 기온 표시)
-	      new google.maps.Marker({
-	        position: tokyo,
-	        map,
-	        label: {
-	          text: `${icon} ${temp}°C`,
-	          fontSize: "30px",
-	          fontWeight: "bold"
-	        },
-	        title: `도쿄 날씨: ${weather}, ${temp}°C`
-	      });
-	    }
-	  </script>
 </th:block>
 </html>

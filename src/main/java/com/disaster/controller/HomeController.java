@@ -1,26 +1,23 @@
 package com.disaster.controller;
 
-import com.disaster.domain.MemberAddress;
-import com.disaster.dto.MeLocationRes;
-import com.disaster.repository.MemberAddressRepository;
+import com.disaster.domain.userDto;
+import com.disaster.service.indexService;
+
+import lombok.RequiredArgsConstructor;
 
 import java.security.Principal;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
+@RequiredArgsConstructor
 public class HomeController {
 
-    private final MemberAddressRepository addressRepo;
-
-    @Autowired
-    public HomeController(MemberAddressRepository addressRepo) {
-        this.addressRepo = addressRepo;
-    }
+    private final indexService indexService;
 
     @GetMapping("/")
     public String home() {
@@ -29,29 +26,20 @@ public class HomeController {
 
     @GetMapping("/api/me/location")
     @ResponseBody
-    public MeLocationRes meLocation(Principal principal) {
-        MeLocationRes res = new MeLocationRes(false, 35.681236, 139.767125);
+    public Map<String, Object> meLocation(Principal principal) {
+        Map<String, Object> res = new HashMap<>();
+        res.put("loggedIn", false);
+        res.put("lat", 35.681236);
+        res.put("lon", 139.767125);
 
-        if (principal == null) {
-            return res; //
-        }
-
-        String username = principal.getName();
-        List<MemberAddress> addrOpt = addressRepo.findPrimaryByMemberUsername(username);
-
-        if (addrOpt.isPresent()) {
-            MemberAddress addr = addrOpt.get();
-            if (addr.getLat() != null && addr.getLon() != null) {
-                res.setLoggedIn(true);
-                res.setLat(addr.getLat());
-                res.setLon(addr.getLon());
-            } else {
-                res.setLoggedIn(true);
+        if (principal != null) {
+            userDto addr = indexService.getPrimaryAddress(principal.getName());
+            if (addr != null) {
+                res.put("loggedIn", true);
+                res.put("lat", addr.getLat());
+                res.put("lon", addr.getLon());
             }
-        } else {
-            res.setLoggedIn(true);
         }
-
         return res;
     }
 }
