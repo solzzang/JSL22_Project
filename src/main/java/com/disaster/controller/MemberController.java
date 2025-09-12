@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.disaster.domain.MemberDTO;
 import com.disaster.service.MemberService;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 
@@ -148,5 +149,97 @@ public class MemberController {
     
     private boolean isValidEmail(String email) {
         return email != null && email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$");
+    }
+    
+    @PostMapping("/logout")
+    public String logout(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            session.invalidate();
+        }
+        return "redirect:/";
+    }
+    
+ // 비밀번호 찾기 폼
+    @GetMapping("/forgot-password")
+    public String forgotPasswordForm() {
+        return "member/forgot-password";
+    }
+
+    // 비밀번호 재설정 링크 발송
+    @PostMapping("/forgot-password")
+    public String forgotPasswordProcess(@RequestParam("email") String email, Model model) {
+        try {
+            memberService.sendPasswordResetEmail(email);
+            model.addAttribute("success", "비밀번호 재설정 링크가 이메일로 발송되었습니다.");
+            return "member/forgot-password";
+        } catch (RuntimeException e) {
+            model.addAttribute("error", e.getMessage());
+            return "member/forgot-password";
+        }
+    }
+    
+ // 비밀번호 재설정 페이지 (토큰 검증)
+ 
+    @GetMapping("/reset-password")
+    public String resetPasswordForm(@RequestParam("token") String token, Model model) {
+        try {
+            boolean isValidToken = memberService.validateResetToken(token);
+            if (!isValidToken) {
+                model.addAttribute("error", "유효하지 않거나 만료된 링크입니다.");
+                model.addAttribute("success", false);  // 명시적으로 설정
+                return "member/forgot-password";
+            }
+            model.addAttribute("token", token);
+            model.addAttribute("success", false);  // 명시적으로 설정
+            model.addAttribute("error", false);    // 명시적으로 설정
+            return "member/reset-password";
+        } catch (Exception e) {
+            model.addAttribute("error", "오류가 발생했습니다.");
+            model.addAttribute("success", false);  // 명시적으로 설정
+            return "member/forgot-password";
+        }
+    }
+
+ // 비밀번호 변경 처리
+    @PostMapping("/reset-password")
+    public String resetPasswordProcess(@RequestParam("token") String token,
+                                     @RequestParam("password") String password,
+                                     @RequestParam("passwordConfirm") String passwordConfirm,
+                                     Model model) {
+        try {
+            // 비밀번호 확인 검증
+            if (!password.equals(passwordConfirm)) {
+                model.addAttribute("error", "비밀번호가 일치하지 않습니다.");
+                model.addAttribute("success", false);  // 추가
+                model.addAttribute("token", token);
+                return "member/reset-password";
+            }
+            
+            // 비밀번호 길이 검증
+            if (password.length() < 8) {
+                model.addAttribute("error", "비밀번호는 8자 이상이어야 합니다.");
+                model.addAttribute("success", false);  // 추가
+                model.addAttribute("token", token);
+                return "member/reset-password";
+            }
+            
+            // 비밀번호 재설정
+            memberService.resetPassword(token, password);
+            model.addAttribute("success", "비밀번호가 성공적으로 변경되었습니다. 새 비밀번호로 로그인해주세요.");
+            model.addAttribute("error", false);  // 추가
+            return "member/reset-password";
+            
+        } catch (RuntimeException e) {
+            model.addAttribute("error", e.getMessage());
+            model.addAttribute("success", false);  // 추가
+            model.addAttribute("token", token);
+            return "member/reset-password";
+        }
+    }
+    
+    @GetMapping("/myPage")
+    public String myPage() {
+        return "member/mypage"; // templates/guidelines/index.html
     }
 }

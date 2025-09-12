@@ -4,6 +4,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Random;
+import java.util.UUID;
 
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -17,6 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.disaster.domain.CustomUserDetails;
 import com.disaster.domain.MemberAddressDTO;
 import com.disaster.domain.MemberDTO;
 import com.disaster.mapper.MemberMapper;
@@ -36,9 +38,10 @@ public class MemberService implements UserDetailsService {
     
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        // username은 실제로는 email (로그인 시 email 사용)
         MemberDTO member = memberMapper.findByEmail(username);
         
+        System.out.println("로그인 사용자: " + member.getEmail());
+        System.out.println("닉네임: " + member.getNickname()); 
         if (member == null) {
             throw new UsernameNotFoundException("사용자를 찾을 수 없습니다: " + username);
         }
@@ -47,14 +50,12 @@ public class MemberService implements UserDetailsService {
         Collection<GrantedAuthority> authorities = new ArrayList<>();
         authorities.add(new SimpleGrantedAuthority("ROLE_" + member.getRole()));
         
-        // Spring Security User 객체 반환
-        return new User(
-            member.getEmail(),          // username (email)
-            member.getPasswordHash(),   // password (암호화된)
+        // 기존 Spring Security User 대신 CustomUserDetails 반환
+        return new CustomUserDetails(
+            member.getEmail(),          // email
+            member.getPasswordHash(),   // password
+            member.getNickname(),       // nickname 추가!
             member.getIsActive(),       // enabled
-            true,                       // accountNonExpired
-            true,                       // credentialsNonExpired
-            true,                       // accountNonLocked
             authorities                 // authorities
         );
     }
@@ -121,13 +122,13 @@ public class MemberService implements UserDetailsService {
     // 회원가입 처리
     @Transactional
     public void registerMember(MemberDTO memberDTO, HttpSession session) {
-        // 이메일 인증 확인 - 임시 주석처리
-        /*
+        // 이메일 인증 확인 
+        
         Boolean emailVerified = (Boolean) session.getAttribute("emailVerified");
         if (emailVerified == null || !emailVerified) {
             throw new RuntimeException("이메일 인증이 완료되지 않았습니다.");
         }
-        */
+        
         
         // 비밀번호 암호화
         String encodedPassword = passwordEncoder.encode(memberDTO.getPassword());
@@ -170,5 +171,72 @@ public class MemberService implements UserDetailsService {
         session.removeAttribute("verifyEmail");
         session.removeAttribute("verifyTime");
         session.removeAttribute("emailVerified");
+    }
+    
+ // 비밀번호 재설정 이메일 발송
+    public void sendPasswordResetEmail(String email) {
+        // 1. 이메일로 사용자 조회
+        MemberDTO member = memberMapper.findByEmail(email);
+        if (member == null) {
+            throw new RuntimeException("등록되지 않은 이메일입니다.");
+        }
+        
+        // 2. 재설정 토큰 생성 (UUID 사용)
+        String resetToken = UUID.randomUUID().toString();
+        
+        // 3. 토큰 만료시간 설정 (30분 후)
+        Timestamp expiresAt = new Timestamp(System.currentTimeMillis() + 30 * 60 * 1000);
+        
+        // 4. DB에 토큰 저장
+        memberMapper.updateResetToken(email, resetToken, expiresAt);
+        
+        // 5. 재설정 링크 생성
+        String resetLink = "http://localhost:8888/member/reset-password?token=" + resetToken;
+        
+        // 6. 이메일 발송
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(email);
+        message.setSubject("[재난대응시스템] 비밀번호 재설정");
+        String emailBody = String.format(
+            "비밀번호 재설정을 위해 아래 링크를 클릭해주세요.\n\n%s\n\n이 링크는 30분 후 만료됩니다.",
+            resetLink
+        );
+        message.setText(emailBody);
+    }
+    
+ // 토큰 유효성 검증
+    public boolean validateResetToken(String token) {
+        MemberDTO member = memberMapper.findByResetToken(token);
+        
+        if (member == null) {
+            return false; // 토큰이 존재하지 않음
+        }
+        
+        // 토큰 만료시간 확인
+        if (member.getResetTokenExpires() == null || 
+            member.getResetTokenExpires().before(new Timestamp(System.currentTimeMillis()))) {
+            return false; // 토큰이 만료됨
+        }
+        
+        return true;
+    }
+
+    // 비밀번호 재설정
+    @Transactional
+    public void resetPassword(String token, String newPassword) {
+        // 토큰 검증
+        if (!validateResetToken(token)) {
+            throw new RuntimeException("유효하지 않거나 만료된 토큰입니다.");
+        }
+        
+        // 토큰으로 사용자 조회
+        MemberDTO member = memberMapper.findByResetToken(token);
+        
+        // 새 비밀번호 암호화
+        String encodedPassword = passwordEncoder.encode(newPassword);
+        
+        // 비밀번호 업데이트 및 토큰 삭제
+        memberMapper.updatePassword(member.getEmail(), encodedPassword);
+        memberMapper.clearResetToken(member.getEmail());
     }
 }

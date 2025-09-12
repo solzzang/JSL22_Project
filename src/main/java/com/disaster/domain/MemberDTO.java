@@ -39,6 +39,12 @@ public class MemberDTO {
     private Boolean agreePrivacy;    // 개인정보처리방침 동의
     private Boolean agreeMarketing;  // 마케팅 수신 동의
     
+    private Timestamp resetTokenExpires;  // reset_token_expires
+
+ // getter/setter
+ public Timestamp getResetTokenExpires() { return resetTokenExpires; }
+ public void setResetTokenExpires(Timestamp resetTokenExpires) { this.resetTokenExpires = resetTokenExpires; }
+    
     // 생성자
     public MemberDTO() {
         this.role = "USER";  // 기본값

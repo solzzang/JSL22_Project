@@ -82,5 +82,37 @@
         FROM member 
         WHERE email = #{email} AND is_active = TRUE
     </select>
+    
+    <update id="updateResetToken">
+    UPDATE member SET 
+        reset_token = #{resetToken},
+        reset_token_expires = #{expiresAt}
+    WHERE email = #{email}
+	</update>
+	
+	<!-- 토큰으로 사용자 조회 -->
+<select id="findByResetToken" resultType="com.disaster.domain.MemberDTO">
+    SELECT 
+        member_id as memberId,
+        email,
+        reset_token_expires as resetTokenExpires
+    FROM member 
+    WHERE reset_token = #{resetToken} AND is_active = TRUE
+</select>
+
+<!-- 비밀번호 업데이트 -->
+<update id="updatePassword">
+    UPDATE member SET 
+        password_hash = #{passwordHash}
+    WHERE email = #{email}
+</update>
+
+<!-- 토큰 삭제 -->
+<update id="clearResetToken">
+    UPDATE member SET 
+        reset_token = NULL,
+        reset_token_expires = NULL
+    WHERE email = #{email}
+</update>
 
 </mapper>

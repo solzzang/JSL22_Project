@@ -1,8 +1,5 @@
 @charset "UTF-8";
 
-
-      
-
 /* --- 기존 사이트 공통 스타일 --- */
 :root {
     --main-red: #E60012;
@@ -231,7 +228,6 @@ html, body {
     background-color: #c0000e;
 }
 
-
 /* --- 관리자 대시보드 레이아웃 --- */
 .admin-page-wrapper {
     display: flex;
@@ -429,7 +425,6 @@ html, body {
     border-color: var(--main-red);
 }
 
-
 /* ========================================
    반응형 디자인 (모바일 & 태블릿)
 ======================================== */
@@ -596,6 +591,26 @@ html, body {
   .form-card{padding:20px}
 }
 
+/* 비밀번호 찾기 링크 스타일을 btn-outline와 유사하게 설정 */
+.form-meta .forgot-password-link {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    padding: 6px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    background: transparent;
+    color: var(--text-color);
+    text-decoration: none;
+    font-size: 13px;
+    transition: box-shadow .2s, border-color .2s;
+    cursor: pointer;
+}
+.form-meta .forgot-password-link:hover {
+    border-color: #d0d0d0;
+    box-shadow: 0 1px 6px rgba(0,0,0,.06);
+    color: var(--main-red);
+}
 
 /* ===== 회원가입 ===== */
 .req{color:var(--main-red)}
@@ -639,9 +654,8 @@ html, body {
 	}
 #verifyField { display: none; }
 
-
-        /*- page-community   -*/
-        /*-  커뮤니티 페이지  -*/
+/*- page-community   -*/
+/*-  커뮤니티 페이지  -*/
 /* --- 메인 컨텐츠 영역 --- */
         .page-community {
             flex-grow: 1;
@@ -1022,7 +1036,4 @@ html, body {
             background-color: #F8F9FA;
             border-radius: 8px;
             margin-top: 10px;
-        }        
-
-
-
+        }
