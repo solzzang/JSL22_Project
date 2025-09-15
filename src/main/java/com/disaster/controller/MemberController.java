@@ -79,7 +79,7 @@ public class MemberController {
     @PostMapping("/signup")
     public String signupProcess(MemberDTO memberDTO, HttpSession session, Model model) {
         try {
-            // 1. 필수 값 검증
+            // 1. 기본 필수 값 검증
             if (memberDTO.getEmail() == null || memberDTO.getEmail().trim().isEmpty()) {
                 model.addAttribute("error", "이메일을 입력해주세요.");
                 return "member/signup";
@@ -95,13 +95,60 @@ public class MemberController {
                 return "member/signup";
             }
             
+            if (memberDTO.getName() == null || memberDTO.getName().trim().isEmpty()) {
+                model.addAttribute("error", "이름을 입력해주세요.");
+                return "member/signup";
+            }
+            
             // 2. 이메일 형식 검증
             if (!isValidEmail(memberDTO.getEmail())) {
                 model.addAttribute("error", "올바른 이메일 형식이 아닙니다.");
                 return "member/signup";
             }
             
-            // 3. 약관 동의 확인
+            // === 3. 일본 주소 데이터 검증 (추가된 부분) ===
+            if (memberDTO.getPostalCode() == null || memberDTO.getPostalCode().trim().isEmpty()) {
+                model.addAttribute("error", "우편번호를 입력해주세요.");
+                return "member/signup";
+            }
+            
+            // 일본 우편번호 형식 검증 (7자리 숫자)
+            if (!memberDTO.getPostalCode().matches("\\d{7}")) {
+                model.addAttribute("error", "우편번호는 7자리 숫자로 입력해주세요.");
+                return "member/signup";
+            }
+            
+            if (memberDTO.getPrefCode() == null || memberDTO.getPrefCode().trim().isEmpty()) {
+                model.addAttribute("error", "도도부현 정보가 누락되었습니다. 주소를 다시 검색해주세요.");
+                return "member/signup";
+            }
+            
+            if (memberDTO.getMuniCode() == null || memberDTO.getMuniCode().trim().isEmpty()) {
+                model.addAttribute("error", "시구정촌 정보가 누락되었습니다. 주소를 다시 검색해주세요.");
+                return "member/signup";
+            }
+            
+            if (memberDTO.getAddrLine2() == null || memberDTO.getAddrLine2().trim().isEmpty()) {
+                model.addAttribute("error", "상세 주소를 입력해주세요.");
+                return "member/signup";
+            }
+            
+            // 도도부현 코드 형식 검증 (01-47)
+            if (!memberDTO.getPrefCode().matches("^(0[1-9]|[1-4][0-7])$")) {
+                model.addAttribute("error", "올바르지 않은 도도부현 코드입니다.");
+                return "member/signup";
+            }
+            
+            // 시구정촌 코드 형식 검증 (5자리 숫자)
+            if (memberDTO.getMuniCode() == null || 
+                memberDTO.getMuniCode().length() < 5 || 
+                memberDTO.getMuniCode().length() > 6 ||
+                !memberDTO.getMuniCode().matches("\\d+")) {
+                model.addAttribute("error", "올바르지 않은 시구정촌 코드입니다.");
+                return "member/signup";
+            }
+            
+            // 4. 약관 동의 확인
             if (memberDTO.getAgreeTerms() == null || !memberDTO.getAgreeTerms()) {
                 model.addAttribute("error", "이용약관에 동의해주세요.");
                 return "member/signup";
@@ -112,7 +159,7 @@ public class MemberController {
                 return "member/signup";
             }
             
-            // 4. 회원가입 처리
+            // 5. 회원가입 처리
             memberService.registerMember(memberDTO, session);
             
             return "redirect:/member/login?success=true";
@@ -121,6 +168,7 @@ public class MemberController {
             model.addAttribute("error", e.getMessage());
             return "member/signup";
         } catch (Exception e) {
+            e.printStackTrace();
             model.addAttribute("error", "회원가입 중 오류가 발생했습니다.");
             return "member/signup";
         }
@@ -145,22 +193,9 @@ public class MemberController {
         return "member/login";
     }
     
-    // ========== 유틸리티 메서드 ==========
+    // ========== 비밀번호 관련 ==========
     
-    private boolean isValidEmail(String email) {
-        return email != null && email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$");
-    }
-    
-    @PostMapping("/logout")
-    public String logout(HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
-        if (session != null) {
-            session.invalidate();
-        }
-        return "redirect:/";
-    }
-    
- // 비밀번호 찾기 폼
+    // 비밀번호 찾기 폼
     @GetMapping("/forgot-password")
     public String forgotPasswordForm() {
         return "member/forgot-password";
@@ -179,29 +214,28 @@ public class MemberController {
         }
     }
     
- // 비밀번호 재설정 페이지 (토큰 검증)
- 
+    // 비밀번호 재설정 페이지 (토큰 검증)
     @GetMapping("/reset-password")
     public String resetPasswordForm(@RequestParam("token") String token, Model model) {
         try {
             boolean isValidToken = memberService.validateResetToken(token);
             if (!isValidToken) {
                 model.addAttribute("error", "유효하지 않거나 만료된 링크입니다.");
-                model.addAttribute("success", false);  // 명시적으로 설정
+                model.addAttribute("success", false);
                 return "member/forgot-password";
             }
             model.addAttribute("token", token);
-            model.addAttribute("success", false);  // 명시적으로 설정
-            model.addAttribute("error", false);    // 명시적으로 설정
+            model.addAttribute("success", false);
+            model.addAttribute("error", false);
             return "member/reset-password";
         } catch (Exception e) {
             model.addAttribute("error", "오류가 발생했습니다.");
-            model.addAttribute("success", false);  // 명시적으로 설정
+            model.addAttribute("success", false);
             return "member/forgot-password";
         }
     }
 
- // 비밀번호 변경 처리
+    // 비밀번호 변경 처리
     @PostMapping("/reset-password")
     public String resetPasswordProcess(@RequestParam("token") String token,
                                      @RequestParam("password") String password,
@@ -211,7 +245,7 @@ public class MemberController {
             // 비밀번호 확인 검증
             if (!password.equals(passwordConfirm)) {
                 model.addAttribute("error", "비밀번호가 일치하지 않습니다.");
-                model.addAttribute("success", false);  // 추가
+                model.addAttribute("success", false);
                 model.addAttribute("token", token);
                 return "member/reset-password";
             }
@@ -219,7 +253,7 @@ public class MemberController {
             // 비밀번호 길이 검증
             if (password.length() < 8) {
                 model.addAttribute("error", "비밀번호는 8자 이상이어야 합니다.");
-                model.addAttribute("success", false);  // 추가
+                model.addAttribute("success", false);
                 model.addAttribute("token", token);
                 return "member/reset-password";
             }
@@ -227,19 +261,30 @@ public class MemberController {
             // 비밀번호 재설정
             memberService.resetPassword(token, password);
             model.addAttribute("success", "비밀번호가 성공적으로 변경되었습니다. 새 비밀번호로 로그인해주세요.");
-            model.addAttribute("error", false);  // 추가
+            model.addAttribute("error", false);
             return "member/reset-password";
             
         } catch (RuntimeException e) {
             model.addAttribute("error", e.getMessage());
-            model.addAttribute("success", false);  // 추가
+            model.addAttribute("success", false);
             model.addAttribute("token", token);
             return "member/reset-password";
         }
     }
     
+    // ========== 마이페이지 ==========
+    
     @GetMapping("/myPage")
     public String myPage() {
-        return "member/mypage"; // templates/guidelines/index.html
+        return "member/mypage";
     }
+    
+    // ========== 유틸리티 메서드 ==========
+    
+    private boolean isValidEmail(String email) {
+        return email != null && email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$");
+    }
+    
+    // 로그아웃은 Spring Security가 자동으로 처리하므로 제거
+    // SecurityConfig에서 .logoutUrl("/logout")으로 설정됨
 }

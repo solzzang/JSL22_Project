@@ -44,4 +44,7 @@ public interface MemberMapper {
 
     // 토큰 삭제
     int clearResetToken(String email);
+    
+ // MemberMapper.java에 추가
+    MemberAddressDTO findPrimaryAddressByEmail(String email);
 }

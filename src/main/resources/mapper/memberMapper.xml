@@ -115,4 +115,26 @@
     WHERE email = #{email}
 </update>
 
+<!-- 인덱스용 주소 조회 -->
+<select id="findPrimaryAddressByEmail" resultType="com.disaster.domain.MemberAddressDTO">
+    SELECT
+        ma.address_id as addressId,
+        ma.member_id as memberId,
+        ma.postal_code as postalCode,
+        ma.pref_code as prefCode,
+        ma.muni_code as muniCode,
+        ma.addr_line1 as addrLine1,
+        ma.addr_line2 as addrLine2,
+        ma.lat as lat,
+        ma.lon as lon,
+        ma.is_primary as isPrimary,
+        ma.disaster_status as disasterStatus,
+        ma.created_at as createdAt
+    FROM member m
+    JOIN member_address ma ON m.member_id = ma.member_id
+    WHERE m.email = #{email} 
+    AND ma.is_primary = TRUE
+    LIMIT 1
+</select>
+
 </mapper>

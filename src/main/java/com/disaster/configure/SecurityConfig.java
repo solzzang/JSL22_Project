@@ -10,7 +10,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import com.disaster.service.MemberService;
 
@@ -43,18 +42,19 @@ public class SecurityConfig {
             .authenticationProvider(authenticationProvider())
             .authorizeHttpRequests(authz -> authz
                 // 공개 페이지들
-                .requestMatchers("/", 
-                               "/member/login", 
-                               "/member/signup", 
-                               "/member/forgot-password**", 
-                               "/member/reset-password**",
-                               "/member/check-**", 
-                               "/member/send-**", 
-                               "/member/verify-**", 
-                               "/logout", 
-                               "/css/**", 
-                               "/js/**", 
-                               "/images/**").permitAll()
+                .requestMatchers("/",
+                    "/member/login",
+                    "/member/signup", 
+                    "/member/forgot-password**",
+                    "/member/reset-password**",
+                    "/member/check-**",
+                    "/member/send-**",
+                    "/member/verify-**",
+                    "/perform_login",  // Spring Security 기본 로그인 처리 URL
+                    "/logout",
+                    "/css/**",
+                    "/js/**",
+                    "/images/**").permitAll()
                 // 비밀번호 재설정 관련 명시적 허용
                 .requestMatchers(HttpMethod.GET, "/member/reset-password").permitAll()
                 .requestMatchers(HttpMethod.POST, "/member/reset-password").permitAll()
@@ -63,10 +63,10 @@ public class SecurityConfig {
             )
             .formLogin(form -> form
                 .loginPage("/member/login")
-                .loginProcessingUrl("/login")
+                .loginProcessingUrl("/perform_login")  // Spring Security 기본값 사용
                 .usernameParameter("username")
                 .passwordParameter("password")
-                .defaultSuccessUrl("/")
+                .defaultSuccessUrl("/", true)  // true 추가: 항상 홈으로 리다이렉트
                 .failureUrl("/member/login?error=true")
                 .permitAll()
             )

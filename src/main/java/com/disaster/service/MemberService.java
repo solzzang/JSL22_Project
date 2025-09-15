@@ -10,7 +10,6 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -119,16 +118,14 @@ public class MemberService implements UserDetailsService {
         return false;
     }
     
-    // 회원가입 처리
+    // 회원가입 처리 (일본 주소로 수정)
     @Transactional
     public void registerMember(MemberDTO memberDTO, HttpSession session) {
         // 이메일 인증 확인 
-        
         Boolean emailVerified = (Boolean) session.getAttribute("emailVerified");
         if (emailVerified == null || !emailVerified) {
             throw new RuntimeException("이메일 인증이 완료되지 않았습니다.");
         }
-        
         
         // 비밀번호 암호화
         String encodedPassword = passwordEncoder.encode(memberDTO.getPassword());
@@ -149,19 +146,21 @@ public class MemberService implements UserDetailsService {
         // 회원 정보 저장
         memberMapper.insertMember(memberDTO);
         
-        // 주소 정보가 있으면 저장
-        if (memberDTO.getPostcode() != null && !memberDTO.getPostcode().isEmpty()) {
+        // === 일본 주소 정보 저장 (수정된 부분) ===
+        if (memberDTO.getPostalCode() != null && !memberDTO.getPostalCode().isEmpty()) {
             MemberAddressDTO addressDTO = new MemberAddressDTO();
             addressDTO.setMemberId(memberDTO.getMemberId());
-            addressDTO.setPostalCode(memberDTO.getPostcode());
-            addressDTO.setAddrLine1(memberDTO.getAddress1());
-            addressDTO.setAddrLine2(memberDTO.getAddress2());
             
-            // 우편번호에서 지역코드 추출
-            if (memberDTO.getPostcode().length() >= 5) {
-                addressDTO.setPrefCode(memberDTO.getPostcode().substring(0, 2));
-                addressDTO.setMuniCode(memberDTO.getPostcode());
-            }
+            // 일본 주소 데이터 직접 매핑 (필드명 일치)
+            addressDTO.setPostalCode(memberDTO.getPostalCode());
+            addressDTO.setPrefCode(memberDTO.getPrefCode());
+            addressDTO.setMuniCode(memberDTO.getMuniCode());
+            addressDTO.setAddrLine1(memberDTO.getAddrLine1());
+            addressDTO.setAddrLine2(memberDTO.getAddrLine2());
+            
+            // 좌표 정보 (있으면 저장, 없으면 null)
+            addressDTO.setLat(memberDTO.getLat());
+            addressDTO.setLon(memberDTO.getLon());
             
             memberMapper.insertMemberAddress(addressDTO);
         }
@@ -173,7 +172,7 @@ public class MemberService implements UserDetailsService {
         session.removeAttribute("emailVerified");
     }
     
- // 비밀번호 재설정 이메일 발송
+    // 비밀번호 재설정 이메일 발송
     public void sendPasswordResetEmail(String email) {
         // 1. 이메일로 사용자 조회
         MemberDTO member = memberMapper.findByEmail(email);
@@ -202,9 +201,11 @@ public class MemberService implements UserDetailsService {
             resetLink
         );
         message.setText(emailBody);
+        
+        mailSender.send(message);
     }
     
- // 토큰 유효성 검증
+    // 토큰 유효성 검증
     public boolean validateResetToken(String token) {
         MemberDTO member = memberMapper.findByResetToken(token);
         
