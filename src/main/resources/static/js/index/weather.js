@@ -1,4 +1,3 @@
-// public/js/index/weather.js
 (function () {
   // ============================
   // 1) 공통 유틸 & 이모지 매핑
@@ -362,5 +361,6 @@
       zoom: 12
     });
     window._map = map; // 체크박스 토글 등에서 접근 가능
+	window.map  = map;
   };
 })();
