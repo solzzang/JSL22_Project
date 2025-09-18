@@ -268,3 +268,163 @@ document.addEventListener("DOMContentLoaded", () => {
     .catch(err => console.error("쓰나미 불러오기 오류:", err));
 
 });
+
+// 대피소, 병원
+// 거리 계산
+function calcDistance(lat1, lon1, lat2, lon2) {
+    const R = 6371;
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+    const a = Math.sin(dLat/2)**2 +
+              Math.cos(lat1 * Math.PI / 180) *
+              Math.cos(lat2 * Math.PI / 180) *
+              Math.sin(dLon/2)**2;
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    return (R * c).toFixed(1);
+}
+
+// 카드 생성
+function createFacilityCard(containerId, name, address, distance, extraInfo = {}) {
+    const container = document.getElementById(containerId).querySelector(".facility-list");
+    if (!container) return;
+
+    const div = document.createElement("div");
+    div.className = "facility-item";
+	// 기본값 처리
+	    const emergency = extraInfo.emergency || "정보 없음";
+	    const contact = extraInfo.contact || "정보 없음";
+
+    div.innerHTML = `
+        <div class="facility-header">
+            <div>
+                <div class="facility-name">${name}</div>
+              	
+            </div>
+        </div>
+        <div class="facility-info">
+            <div><strong>주소:</strong> ${address}</div>
+           	
+            ${extraInfo.emergency ? `<div><strong>응급실:</strong> ${emergency}</div>` : ""}
+            ${extraInfo.contact ? `<div><strong>연락처:</strong> ${contact}</div>` : "<strong>연락처:정보없음</strong>"}
+            <div><strong>거리:</strong> 현재 위치에서 ${distance} km</div>
+        </div>
+    `;
+    container.appendChild(div);
+}
+
+// 시설 검색 + Place Details
+function searchFacility(lat, lng, type, containerId) {
+    return new Promise((resolve, reject) => {
+        const service = new google.maps.places.PlacesService(document.createElement("div"));
+        const request = {
+            location: { lat, lng },
+            radius: 5000,
+            type
+        };
+
+        service.nearbySearch(request, (results, status) => {
+            if (status !== google.maps.places.PlacesServiceStatus.OK || !results) {
+                reject(status);
+                return;
+            }
+
+            // 가장 가까운 3개만 처리
+            results.slice(0,3).forEach(place => {
+                const distance = calcDistance(lat, lng, place.geometry.location.lat(), place.geometry.location.lng());
+
+                // Place Details 호출
+                service.getDetails({ placeId: place.place_id, fields: ['name','formatted_address','formatted_phone_number','opening_hours','rating'] },
+                    (details, detailsStatus) => {
+                        if (detailsStatus === google.maps.places.PlacesServiceStatus.OK && details) {
+                            const extraInfo = {
+                                contact: details.formatted_phone_number || "",
+                                
+                            };
+                            if(type === 'school') extraInfo.capacity = "500명"; // 테스트용
+                            if(type === 'hospital') extraInfo.emergency = "운영중"; // 테스트용
+                            createFacilityCard(containerId, details.name, details.formatted_address, distance, extraInfo);
+                        } else {
+                            // Details 못 가져오면 기본 정보로
+                            createFacilityCard(containerId, place.name, place.vicinity, distance);
+                        }
+                    }
+                );
+            });
+
+            resolve(results);
+        });
+    });
+}
+
+// DOMContentLoaded 후 실행
+document.addEventListener("DOMContentLoaded", async () => {
+    const userLat = 35.6895; // 도쿄 테스트용
+    const userLng = 139.6917;
+
+    try {
+        await searchFacility(userLat, userLng, "school", "shelter");
+        await searchFacility(userLat, userLng, "hospital", "hospital");
+    } catch(err) {
+        console.error("시설 검색 실패:", err);
+    }
+});
+
+
+async function fetchRegionalNews(region) {
+    // ⭐️ 다른 공개 프록시 서버 주소로 변경
+    const proxyUrl = 'https://corsproxy.io/?'; 
+    
+    const targetUrl = `https://news.google.com/rss/search?q=${encodeURIComponent(region)}+災害&hl=ja&gl=JP&ceid=JP:ja`;
+    
+    // 프록시를 통해 요청할 최종 URL
+    const url = proxyUrl + encodeURIComponent(targetUrl);
+
+    try {
+        const res = await fetch(url);
+        if (!res.ok) {
+            throw new Error(`HTTP error! status: ${res.status}`);
+        }
+        const text = await res.text();
+        const parser = new DOMParser();
+        const xml = parser.parseFromString(text, "application/xml");
+        const items = xml.querySelectorAll("item");
+        const newsContainer = document.querySelector(".news-list");
+        newsContainer.innerHTML = "";
+
+        if (items.length === 0) {
+            newsContainer.innerHTML = `<div style="padding: 20px; text-align: center; color: #888;">"${region}" 지역의 뉴스가 없습니다.</div>`;
+            return;
+        }
+
+        items.forEach((item, idx) => {
+            if (idx < 5) {
+                const title = item.querySelector("title").textContent;
+                const link = item.querySelector("link").textContent;
+                const pubDate = new Date(item.querySelector("pubDate").textContent).toLocaleString("ja-JP");
+
+                const div = document.createElement("div");
+                div.className = "news-item";
+                div.innerHTML = `
+                    <a href="${link}" target="_blank">
+                        <div class="news-title">${title}</div>
+                        <div class="news-summary">クリックすると記事の詳細を表示します</div>
+                        <div class="news-meta">
+                            <span>${region}</span>
+                            <span>${pubDate}</span>
+                        </div>
+                    </a>
+                `;
+                newsContainer.appendChild(div);
+            }
+        });
+    } catch (error) {
+        console.error("데이터를 가져오는 중 오류가 발생했습니다:", error);
+        const newsContainer = document.querySelector(".news-list");
+        newsContainer.innerHTML = `<div style="padding: 20px; text-align: center; color: #888;">뉴스를 가져오는 데 실패했습니다. 잠시 후 다시 시도해 주세요.</div>`;
+    }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    const userRegion = "東京";/*[[${userAddress}]]*/
+    fetchRegionalNews(userRegion);
+});

@@ -47,19 +47,19 @@
                             <div class="desc" id="currentWeather" data-translate="weather_sunny">맑음</div>
                         </div>
                     </div>
-
+                    
                     <div class="weather-details">
-                    <div class="weather-detail-item">
-                            <div class="label" data-translate="humidity">풍향/풍속</div>
+                    		<div class="weather-detail-item">
+                            <div class="label" data-translate="wind_speed">바람</div>
                             <div class="value">65%</div>
                         </div>
                         <div class="weather-detail-item">
-                            <div class="label" data-translate="wind_speed">파고</div>
+                            <div class="label" data-translate="humidity">습도</div>
                             <div class="value">3.2m/s</div>
                         </div>
                         <div class="weather-detail-item">
-                            <div class="label" data-translate="uv_index">강수확률</div>
-                            <div class="value" data-translate="uv_moderate">보통</div>
+                            <div class="label" data-translate="uv_index">자외선</div>
+                            <div class="value">3.2m/s</div>
                         </div>
                         
                     </div>
@@ -83,9 +83,7 @@
                                 <div class="time">14:00</div>
                                 <div class="icon">☀️</div>
                                 <div class="temp">23°C</div>
-                            </div>
-                            
-                            
+                            </div> 
                         </div>
                     </div>
 
@@ -102,7 +100,7 @@
                     </div>
 
                     <div id="warning" class="forecast-content">
-                    <div class="disaster-item warning">
+                    		<div class="disaster-item warning">
                             <div class="disaster-header">
                                 <div class="disaster-type">🌧️ <span data-translate="rain_warning">호우주의보</span></div>
                                 <div class="disaster-time">2025.09.03 14:30</div>
@@ -115,22 +113,14 @@
                 <div id="disaster-section" class="section">
                     <h2 class="section-title">🚨 <span data-translate="disaster_title">재난 정보</span></h2>
                     <div class="disaster-alert">
-                        <div class="alert-level">⚠️ <span data-translate="alert_caution">주의 단계</span></div>
-                        <h3 data-translate="current_alert_status">현재 재난 알림 상태</h3>
-                        <p data-translate="rain_alert_desc">호우주의보 발령 중 - 저지대 침수 가능성에 대비하세요</p>
-                    </div>
+					  <div class="alert-level"⚠️> <span data-translate="alert_caution">주의 단계</span></div>
+					  <h3 data-translate="current_alert_status">현재 재난 알림 상태</h3>
+					  <p id="alert-desc">알림 정보를 불러오는 중...</p>
+					</div>
 
-                    <div class="disaster-list">
-                    <div class="disaster-item">
-                            <div class="disaster-header">
-                                <div class="disaster-type">🌊 <span data-translate="flood_risk">침수 위험</span></div>
-                                <div class="disaster-time" data-translate="time_2h_ago">2시간 전</div>
-                            </div>
-                            <p><strong data-translate="affected_area">영향 범위:</strong> <span data-translate="daejeon_seogu">대전 서구 둔산동 일대</span></p>
-                            <p><strong data-translate="duration">예상 지속시간:</strong> <span data-translate="6_hours">6시간</span></p>
-                            <p><strong data-translate="response_method">대응 방법:</strong> <span data-translate="flood_response">지하주차장 차량 이동, 저지대 거주민 대피 준비</span></p>
-                        </div>
-                    </div>
+                    <div class="disaster-list" id="disaster-list">
+					  <!-- 지진, 쓰나미 이벤트가 여기에 추가됨 -->
+					</div>
                 </div>
 
                 <div id="facility-section" class="section">
@@ -146,44 +136,12 @@
                     </div>
 
                     <div id="shelter" class="facility-content active">
-                        <div class="facility-list">
-                        <div class="facility-item">
-                                <div class="facility-header">
-                                    <div>
-                                        <div class="facility-name" data-translate="dunsan_middle_gym">둔산중학교 체육관</div>
-                                        <div class="facility-status active" data-translate="operating">운영중</div>
-                                    </div>
-                                </div>
-                                <div class="facility-info">
-                                    <div><strong data-translate="address">주소:</strong> <span data-translate="dunsan_address">대전 서구 둔산로 123</span></div>
-                                    <div><strong data-translate="capacity">수용인원:</strong> <span data-translate="500_people">500명</span></div>
-                                    <div><strong data-translate="contact">연락처:</strong> 042-123-4567</div>
-                                    <div><strong data-translate="distance">거리:</strong> <span data-translate="distance_1_2km">현재 위치에서 1.2km</span></div>
-                                </div>
-                            </div>
-                            
-                            
-                        </div>
-                    </div>
-
-                    <div id="hospital" class="facility-content">
-                        <div class="facility-list">
-                        <div class="facility-item">
-                                <div class="facility-header">
-                                    <div>
-                                        <div class="facility-name" data-translate="cnu_hospital">충남대학교병원</div>
-                                        <div class="facility-status active" data-translate="24_hours">24시간</div>
-                                    </div>
-                                </div>
-                                <div class="facility-info">
-                                    <div><strong data-translate="address">주소:</strong> <span data-translate="cnu_address">대전 중구 문화로 282</span></div>
-                                    <div><strong data-translate="emergency_room">응급실:</strong> <span data-translate="operating">운영중</span></div>
-                                    <div><strong data-translate="contact">연락처:</strong> 042-280-7777</div>
-                                    <div><strong data-translate="distance">거리:</strong> <span data-translate="distance_3_5km">현재 위치에서 3.5km</span></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+					    <div class="facility-list"></div>
+					</div>
+					
+					<div id="hospital" class="facility-content">
+					    <div class="facility-list"></div>
+					</div>
                 </div>
 
                 <div id="history-section" class="section">
@@ -252,191 +210,9 @@
     </div>
 </div>
 <th:block layout:fragment="script">
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const searchInput = document.getElementById('regionSearchInput');
-            if (searchInput) {
-                searchInput.addEventListener('keypress', function(e) {
-                    if (e.key === 'Enter') {
-                        // searchRegion 함수는 정의되지 않았으므로 동작하지 않습니다.
-                        // searchRegion();
-                    }
-                });
-            }
-
-            const firstNavItem = document.querySelector('.nav-menu .nav-item');
-            if (firstNavItem) {
-                firstNavItem.classList.add('active');
-            }
-
-            updateRegionDataJapan('130000');
-        });
-
-        function scrollToSection(sectionId, navItem) {
-            event.preventDefault();
-            const section = document.getElementById(sectionId);
-            if (section) {
-                section.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
-                });
-                document.querySelectorAll('.nav-item').forEach(item => {
-                    item.classList.remove('active');
-                });
-                navItem.classList.add('active');
-                history.pushState(null, null, `#${sectionId}`);
-            }
-        }
-
-        function showForecast(type, tab) {
-            document.querySelectorAll('.forecast-tab').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.forecast-content').forEach(content => content.classList.remove('active'));
-            tab.classList.add('active');
-            document.getElementById(type).classList.add('active');
-        }
-
-        function showFacility(type, tab) {
-            document.querySelectorAll('.facility-tab').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.facility-content').forEach(content => content.classList.remove('active'));
-            tab.classList.add('active');
-            document.getElementById(type).classList.add('active');
-        }
-
-        function showLoadingState() {
-            document.getElementById("currentTemp").textContent = "로딩중...";
-            document.getElementById("currentWeather").textContent = "데이터 가져오는 중";
-            document.querySelector(".weather-detail-item:nth-child(1) .value").textContent = "...";
-            document.querySelector(".weather-detail-item:nth-child(2) .value").textContent = "...";
-            document.querySelector(".weather-detail-item:nth-child(3) .value").textContent = "...";
-        }
-
-        function updateRegionDataJapan(areaCode) {
-            showLoadingState();
-
-            const forecastUrl = `https://www.jma.go.jp/bosai/forecast/data/forecast/${areaCode}.json`;
-            const weekUrl = `https://www.jma.go.jp/bosai/forecast/data/overview_week/${areaCode}.json`; // **수정된 URL**
-            const warningUrl = `https://www.jma.go.jp/bosai/warning/data/warning/${areaCode}.json`;
-
-            fetch(forecastUrl)
-                .then(res => {
-                    if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-                    return res.json();
-                })
-                .then(weatherData => {
-                    const areaForecast = weatherData[0].timeSeries[0].areas[0];
-                    const areaTemps = weatherData[0].timeSeries.find(ts => ts.areas?.[0]?.temps)?.areas?.[0];
-                    const areaPops = weatherData[0].timeSeries.find(ts => ts.areas?.[0]?.pops)?.areas?.[0];
-
-                    const weatherTodayDesc = areaForecast.weathers?.[0]?.split("　")[0] || '정보 없음';
-                    const weatherCodeToday = areaForecast.weatherCodes?.[0];
-                    const iconToday = getWeatherIcon(weatherCodeToday);
-                    
-                    const windToday = areaForecast.winds?.[0] || '정보 없음';
-                    const waveToday = areaForecast.waves?.[0] || '정보 없음';
-                    const rainPercent = areaPops?.pops?.[0] !== undefined ? areaPops.pops[0] : '-';
-
-                    const tempMax = areaTemps?.temps?.[1] !== undefined ? areaTemps.temps[1] : '-';
-                    const tempMin = areaTemps?.temps?.[0] !== undefined ? areaTemps.temps[0] : '-';
-
-                    document.getElementById("regionName").textContent = areaForecast.area.name;
-                    document.getElementById("currentWeather").textContent = weatherTodayDesc;
-                    document.getElementById("currentTemp").textContent = `${tempMax}°C / ${tempMin}°C`;
-                    document.querySelector(".weather-detail-item:nth-child(1) .value").textContent = windToday;
-                    document.querySelector(".weather-detail-item:nth-child(2) .value").textContent = waveToday;
-                    document.querySelector(".weather-detail-item:nth-child(3) .value").textContent = rainPercent + "%";
-                    document.querySelector(".weather-card .icon").textContent = iconToday;
-
-                    const hourlyDiv = document.getElementById("hourly").querySelector(".hourly-forecast");
-                    hourlyDiv.innerHTML = "";
-                    const hourlyTimeDefines = weatherData[0].timeSeries[0].timeDefines;
-                    areaForecast.weatherCodes.forEach((code, i) => {
-                        const time = hourlyTimeDefines[i].slice(11, 16);
-                        const icon = getWeatherIcon(code);
-                        const temp = areaTemps?.temps?.[i] !== undefined ? areaTemps.temps[i] : "-";
-                        hourlyDiv.innerHTML += `
-                            <div class="forecast-item">
-                                <div class="time">${time}</div>
-                                <div class="icon">${icon}</div>
-                                <div class="temp">${temp}°C</div>
-                            </div>`;
-                    });
-                })
-                .catch(err => console.error("오늘 날씨 오류:", err));
-
-            fetch(weekUrl)
-            .then(res => {
-                if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-                return res.json();
-            })
-            .then(weekData => {
-                const dailyDiv = document.getElementById("daily").querySelector(".daily-forecast");
-                dailyDiv.innerHTML = "";
-
-                // JMA 주간 데이터 구조에 따라 예시
-                const weekArea = weekData[0].tempAverage?.areas?.[0];
-
-                if (!weekArea) return;
-
-                const today = new Date();
-                for (let i = 0; i < 7; i++) {
-                    const date = new Date(today);
-                    date.setDate(today.getDate() + i);
-                    const dayName = `${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getDate().toString().padStart(2, '0')}`;
-                    
-                    // tempMax, tempMin, weatherCode는 주간 데이터에서 가져오기
-                    const tempMax = weekData[0].tempsMax?.[i] ?? "-";
-                    const tempMin = weekData[0].tempsMin?.[i] ?? "-";
-                    const icon = "☀️"; // 일단 아이콘은 고정, 필요하면 weatherCode 매핑 가능
-
-                    dailyDiv.innerHTML += `
-                        <div class="forecast-item">
-                            <div class="time">${dayName}</div>
-                            <div class="icon">${icon}</div>
-                            <div class="temp">${tempMax}°C / ${tempMin}°C</div>
-                        </div>`;
-                }
-            })
-            .catch(err => console.error("주간 예보 오류:", err));
-        }
-
-        function getWeatherIcon(code) {
-            if (code >= 100 && code <= 106) return "☀️";
-            if (code >= 200 && code <= 208) return "☁️";
-            if (code >= 300 && code <= 308) return "🌧️";
-            if (code >= 311 && code <= 313) return "🌦️";
-            if (code >= 400 && code <= 408) return "❄️";
-            if (code >= 411 && code <= 413) return "🌨️";
-            if (code >= 500 && code <= 501) return "⛈️";
-            return "❓";
-        }
-        
-        // **수정된 getWarningIcon 함수: 더 상세한 아이콘 매핑**
-        function getWarningIcon(code) {
-            const warningCodes = {
-                '03': '⚠️', // 주의보
-                '04': '🚨', // 경보
-                '05': '🌪️', // 태풍
-                '06': '🌬️', // 강풍
-                '07': '🌊', // 폭풍 해일
-                '08': '🌊', // 파랑
-                '10': '❄️', // 대설
-                '12': '🌧️', // 호우
-                '13': '🌩️', // 뇌전
-                '14': '🌫️', // 홍수
-                '15': '🌨️', // 눈보라
-                '16': '🧊', // 한파
-                '17': '🔥', // 건조
-                '18': '🌬️', // 강풍
-                '19': '🌊', // 폭풍 해일
-                '20': '💧', // 고조
-                '21': '❄️', // 대설
-                '22': '🌧️', // 호우
-                '23': '🌬️', // 강풍
-            };
-            const codeSuffix = code.slice(-2);
-            return warningCodes[codeSuffix] || '⚠️';
-        }
-    </script>
+	<script src="/js/detail/jma.js"></script>
 </th:block>
+
+
 </body>
 </html>
