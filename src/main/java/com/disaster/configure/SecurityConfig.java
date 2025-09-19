@@ -16,13 +16,14 @@ public class SecurityConfig {
             .authorizeHttpRequests(authz -> authz
                 .requestMatchers("/", "/login", "/register", "/css/**", "/js/**", "/images/**","/mock/**").permitAll()
                 .requestMatchers("/admin/**").hasRole("ADMIN")
+                .requestMatchers("/detail/**").permitAll()
                 .anyRequest().authenticated()
             )
-            .formLogin(form -> form
-                .loginPage("/member/login")
-                .defaultSuccessUrl("/")
-                .permitAll()
-            )
+//            .formLogin(form -> form
+//                .loginPage("/member/login")
+//                .defaultSuccessUrl("/")
+//                .permitAll()
+//            )
             .logout(logout -> logout
                 .logoutSuccessUrl("/")
                 .permitAll()
