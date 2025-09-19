@@ -303,7 +303,7 @@ html, body {
     .data-table td:last-child::before {
         display: none; /* '관리' 라벨은 숨김 */
     }
-}
+
 
 /* ===== 로그인 ===== */
 .auth-wrap{display:flex;justify-content:center}
