@@ -86,55 +86,67 @@
       ...data2.map(d => ({ ...d, type: "指定緊急避難場所" }))
     ];
 
-    // 5) 거리 계산 후 가까운 30개만 선택
-    const sorted = all
-      .map(item => {
-        const lat = parseFloat(item["緯度"]);
-        const lng = parseFloat(item["経度"]);
-        return (!lat || !lng) ? null : {
-          ...item,
-          lat, lng,
-          dist: distKm(cx, cy, lat, lng)
-        };
-      })
-      .filter(Boolean)
-      .sort((a, b) => a.dist - b.dist)
-      .slice(0, 30);
+	// 👉 공통 함수로 뽑아내기
+	  function renderNearest(cx, cy) {
+	    // 기존 마커 제거
+	    [...shelterMarkers, ...emergencyMarkers].forEach(m => m.setMap(null));
+	    shelterMarkers = [];
+	    emergencyMarkers = [];
 
-    // 6) 지도에 마커 추가
-    sorted.forEach(item => {
-      const marker = new google.maps.Marker({
-        position: { lat: item.lat, lng: item.lng },
-        map,
-        title: item["名称"] || item["施設名"] || item.type,
-        icon: {
-          url: item.type === "指定避難所"
-            ? "http://maps.google.com/mapfiles/ms/icons/blue-dot.png"
-            : "http://maps.google.com/mapfiles/ms/icons/red-dot.png"
-        }
-      });
+	    // 가까운 30개만 다시 그림
+	    const sorted = all
+	      .map(item => {
+	        const lat = parseFloat(item["緯度"]);
+	        const lng = parseFloat(item["経度"]);
+	        return (!lat || !lng) ? null : {
+	          ...item,
+	          lat, lng,
+	          dist: distKm(cx, cy, lat, lng)
+	        };
+	      })
+	      .filter(Boolean)
+	      .sort((a, b) => a.dist - b.dist)
+	      .slice(0, 30);
 
-      const info = new google.maps.InfoWindow({
-        content: `
-          <div style="min-width:200px">
-            <b>${item["名称"] || item["施設名"]}</b><br>
-            ${item["住所"] || ""}<br>
-            種別: ${item.type}
-          </div>
-        `
-      });
+	    sorted.forEach(item => {
+	      const marker = new google.maps.Marker({
+	        position: { lat: item.lat, lng: item.lng },
+	        map,
+	        title: item["名称"] || item["施設名"] || item.type,
+	        icon: {
+	          url: item.type === "指定避難所"
+	            ? "http://maps.google.com/mapfiles/ms/icons/blue-dot.png"
+	            : "http://maps.google.com/mapfiles/ms/icons/red-dot.png"
+	        }
+	      });
 
-      marker.addListener("click", () => info.open(map, marker));
+	      const info = new google.maps.InfoWindow({
+	        content: `
+	          <div style="min-width:200px">
+	            <b>${item["名称"] || item["施設名"]}</b><br>
+	            ${item["住所"] || ""}<br>
+	            種別: ${item.type}
+	          </div>
+	        `
+	      });
 
-      if (item.type === "指定避難所") {
-        shelterMarkers.push(marker);
-      } else {
-        emergencyMarkers.push(marker);
-      }
-    });
+	      marker.addListener("click", () => info.open(map, marker));
 
-    map.setCenter({ lat: cx, lng: cy });
-  }
+	      if (item.type === "指定避難所") shelterMarkers.push(marker);
+	      else emergencyMarkers.push(marker);
+	    });
+	  }
+
+	  // 3) 최초 실행 (사용자 좌표 기준)
+	  renderNearest(cx, cy);
+	  map.setCenter({ lat: cx, lng: cy });
+
+	  // 4) idle 이벤트 등록 (지도 이동 시 30개 갱신)
+	  map.addListener("idle", () => {
+	    const c = map.getCenter();
+	    renderNearest(c.lat(), c.lng());
+	  });
+	}
 
   function disable() {
     [...shelterMarkers, ...emergencyMarkers].forEach(m => m.setMap(null));
