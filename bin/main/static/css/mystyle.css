@@ -1104,7 +1104,36 @@ html, body {
 }
         
         
+/* Shelter Info Box */
+#shelter-info {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  background: #fff;
+  padding: 8px 12px;
+  border-radius: 6px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+  font-size: 14px;
+  line-height: 20px;
+  z-index: 1000;
+}
 
+#shelter-info div {
+  display: flex;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+#shelter-info div:last-child {
+  margin-bottom: 0;
+}
+
+#shelter-info .info-icon {
+  width: 20px;
+  height: 20px;
+  margin-right: 6px;
+  vertical-align: middle;
+}
 
 
 

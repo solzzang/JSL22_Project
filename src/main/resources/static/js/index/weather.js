@@ -87,7 +87,7 @@
     return inLat(lat) && inLng(lon);
   }
 
-  // 🔹 OverlayView 라벨 생성 함수 (전역 유틸)
+  // OverlayView 라벨 생성 함수 (전역 유틸)
   function makeLabel(map, position, text, fontPx = 16, offsetY = "-170%", zIndex = 500) {
     class LabelOverlay extends google.maps.OverlayView {
       constructor(pos, txt, opt) {
@@ -162,15 +162,7 @@
       // 이전 것 정리
       clear();
 
-      // 1-1) 내 위치 빨간핀 (기본 Marker)
-      userPin = new google.maps.Marker({
-        map: mapRef,
-        position: { lat: userPos.lat, lng: userPos.lon },
-        icon: "http://maps.google.com/mapfiles/ms/icons/red-dot.png",
-        title: `${meData.location.name} / ${meTemp}°C`
-      });
-
-      // 1-2) 내 위치 라벨 (핀보다 위쪽, 가장 위 zIndex)
+      // 1) 내 위치 라벨
       userLabel = makeLabel(
         mapRef,
         { lat: userPos.lat, lng: userPos.lon },

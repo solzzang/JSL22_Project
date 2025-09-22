@@ -12,7 +12,7 @@
 					<label><input type="checkbox" id="weatherToggle"> 天気情報</label> <label><input
 						type="checkbox" id="disasterToggle"> 災害情報</label> <label><input
 						type="checkbox" id="shelterToggle"> 避難所情報</label> <label><input
-						type="checkbox"> 病院情報</label>
+						type="checkbox" id="hospitalToggle"> 病院情報</label>
 				</div>
 			</aside>
 
@@ -60,7 +60,10 @@
 	  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBdiJWNOl98gTR6XjCfDhubMwXQZVO3ejs&callback=initMap&libraries=marker&v=weekly&loading=async"
 	  async defer>
 	</script>
-	<script src="/js/index/shelters.js"></script>
+	<script src="/js/index/myLocation.js"></script>
+	<script src="/js/index/shelters.js"></script> <!-- 내 주변 대피소 30개 표시 -->
+	<!-- <script src="/js/index/allShelters.js"></script> --> <!-- 모든 대피소 표시 -->
+	<script src="/js/index/hospitals.js"></script>
 	<script src="/js/index/toggle.js"></script>
 </th:block>
 </html>
