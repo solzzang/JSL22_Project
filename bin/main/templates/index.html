@@ -11,7 +11,7 @@
 				<div class="filter-group">
 					<label><input type="checkbox" id="weatherToggle"> 天気情報</label> <label><input
 						type="checkbox" id="disasterToggle"> 災害情報</label> <label><input
-						type="checkbox"> 避難所情報</label> <label><input
+						type="checkbox" id="shelterToggle"> 避難所情報</label> <label><input
 						type="checkbox"> 病院情報</label>
 				</div>
 			</aside>
@@ -24,7 +24,7 @@
 
 				<h2 class="section-title">현재 지역 상세 정보</h2>
 				<div class="card-list">
-					<a href="#">
+					<a href="/detail">
 						<div class="card-icon">🗺️</div>
 						<div class="card-content">
 							<h4>주변 대피소 목록</h4>
@@ -56,10 +56,11 @@
 	<script src="/js/cities.js"></script>
 	<script src="/js/index/weather.js"></script>
 	<script src="/js/index/disaster.js"></script>
-	<script src="/js/index/toggle.js"></script>
 	<script
 	  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBdiJWNOl98gTR6XjCfDhubMwXQZVO3ejs&callback=initMap&libraries=marker&v=weekly&loading=async"
 	  async defer>
 	</script>
+	<script src="/js/index/shelters.js"></script>
+	<script src="/js/index/toggle.js"></script>
 </th:block>
 </html>

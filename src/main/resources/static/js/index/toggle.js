@@ -19,6 +19,8 @@ function initMap() {
 document.addEventListener("DOMContentLoaded", () => {
   const weatherToggle = document.getElementById('weatherToggle');
   const disasterToggle = document.getElementById('disasterToggle');
+  const shelterToggle = document.getElementById('shelterToggle');
+
   // 날씨 토글
   if (weatherToggle) {
     weatherToggle.addEventListener('change', () => {
@@ -39,4 +41,16 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
   }
+  // 대피소 토글
+  if (shelterToggle) {
+      shelterToggle.addEventListener('change', () => {
+        if (shelterToggle.checked) {
+          ShelterFeature.enable(window._map);
+		  window._map.setZoom(15);
+        } else {
+          ShelterFeature.disable();
+		  window._map.setZoom(12);
+        }
+      });
+    }
 });
