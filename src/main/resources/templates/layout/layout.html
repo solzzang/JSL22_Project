@@ -7,17 +7,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ボウサイリンク - 災害情報マップサービス</title>
-    <!-- 우편번 -->
+    
+    <!-- 기존 스크립트들 -->
     <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+    
+    <!-- ✅ Google Maps API 추가 -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places"></script>
+    
     <!-- 구글 폰트 -->
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
-   
-   	<!-- ✅ 공통 CSS -->
-   	<link rel="stylesheet" th:href="@{/css/mystyle.css}">
     
     <!-- CSS -->
     <link rel="stylesheet" th:href="@{/css/mystyle.css}">
-</head>    
+</head>   
 
 
 <body>
@@ -35,5 +37,8 @@
 	
 	
 	<script th:src="@{/js/signup.js}"></script>
+	
+	<!-- JMA 크롤러 스크립트 로드 -->
+<script src="/js/detail/jma-crawler.js"></script>
 </body>
 </html>

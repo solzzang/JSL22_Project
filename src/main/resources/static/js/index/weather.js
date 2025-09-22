@@ -360,10 +360,16 @@
   // 7) Google Maps 콜백
   // ============================
   window.initMap = async function () {
+      // 먼저 사용자 위치를 가져온 후 지도 중심점 설정
+      const userLocation = await getMeLocation();
+      console.log("지도 초기화 - 사용자 위치:", userLocation); // 디버깅 로그
+      
       const map = new google.maps.Map(document.getElementById("map"), {
-        center: { lat: 35.681236, lng: 139.767125 },
+        center: { lat: userLocation.lat, lng: userLocation.lon },
         zoom: 12
       });
+      console.log("지도 중심점 설정됨:", userLocation.lat, userLocation.lon); // 디버깅 로그
+      
       window._map = map;
       
       // 🔥 자동으로 WeatherFeature 활성화

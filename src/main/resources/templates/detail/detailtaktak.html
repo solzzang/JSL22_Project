@@ -7,12 +7,12 @@
         <div class="main-content">
             <main class="content-area">
                 <div class="region-header">
-                    <div class="region-header-top">
+                <div class="region-header-top">
                         <h1>🏙️ <span id="regionName" data-translate="region_daejeon">대전광역시</span></h1>
                         <div class="region-search">
                             <input type="text" id="regionSearchInput" data-translate-placeholder="search_placeholder" placeholder="지역명을 입력하세요" />
                             <button onclick="searchRegion()">🔍 <span data-translate="search_btn">검색</span></button>
-                        </div>
+                            </div>
                     </div>
                     <p data-translate="header_description">실시간 재난 안전 정보 및 대응 현황을 확인하세요</p>
                 </div>
@@ -43,24 +43,25 @@
                     <div class="weather-overview">
                         <div class="weather-card">
                             <div class="icon">☀️</div>
-                            <div class="temp" id="currentTemp">로딩중...</div>
+                            <div class="temp" id="currentTemp" >zz</div>
                             <div class="desc" id="currentWeather" data-translate="weather_sunny">맑음</div>
                         </div>
                     </div>
-
+                    
                     <div class="weather-details">
-                        <div class="weather-detail-item">
+                    		<div class="weather-detail-item">
                             <div class="label" data-translate="wind_speed">바람</div>
-                            <div class="value">...</div>
+                            <div class="value">65%</div>
                         </div>
                         <div class="weather-detail-item">
                             <div class="label" data-translate="humidity">습도</div>
-                            <div class="value">...</div>
+                            <div class="value">3.2m/s</div>
                         </div>
                         <div class="weather-detail-item">
                             <div class="label" data-translate="uv_index">자외선</div>
-                            <div class="value">...</div>
+                            <div class="value">3.2m/s</div>
                         </div>
+                        
                     </div>
 
                     <div class="forecast-tabs">
@@ -77,52 +78,49 @@
 
                     <div id="hourly" class="forecast-content active">
                         <div class="hourly-forecast">
-                            <!-- 동적으로 생성됨 -->
+                        
+                        <div class="forecast-item">
+                                <div class="time">14:00</div>
+                                <div class="icon">☀️</div>
+                                <div class="temp">23°C</div>
+                            </div> 
                         </div>
                     </div>
 
                     <div id="daily" class="forecast-content">
                         <div class="daily-forecast">
-                            <!-- 동적으로 생성됨 -->
+                        <div class="forecast-item">
+                                <div class="time" data-translate="today">오늘</div>
+                                <div class="icon">☀️</div>
+                                <div class="temp">23°/15°C</div>
+                            </div>
+                           
+                           
                         </div>
                     </div>
 
                     <div id="warning" class="forecast-content">
-                        <!-- 동적으로 생성됨 -->
+                    		<div class="disaster-item warning">
+                            <div class="disaster-header">
+                                <div class="disaster-type">🌧️ <span data-translate="rain_warning">호우주의보</span></div>
+                                <div class="disaster-time">2025.09.03 14:30</div>
+                            </div>
+                            <p data-translate="rain_warning_desc">시간당 30mm 이상의 강한 비가 예상됩니다. 저지대 침수에 주의하시기 바랍니다.</p>
+                        </div>
                     </div>
                 </div>
 
                 <div id="disaster-section" class="section">
                     <h2 class="section-title">🚨 <span data-translate="disaster_title">재난 정보</span></h2>
-                    
-                    <!-- 실시간 JMA 재해 정보 표시 영역 -->
-                    <div class="realtime-disaster-info" style="background: #f8f9fa; border: 2px solid #e9ecef; border-radius: 8px; padding: 20px; margin-bottom: 20px;">
-                        <h3>🔴 실시간 일본 재해 정보</h3>
-                        <div id="disaster-status" style="font-weight: bold; color: #666; margin-bottom: 10px;">데이터 로딩 중...</div>
-                        <div id="last-update" style="font-size: 0.9em; color: #888; margin-bottom: 15px;">마지막 업데이트: -</div>
-                        
-                        <!-- 지진 정보 -->
-                        <div class="earthquake-section" style="margin-bottom: 20px;">
-                            <h4>🌋 지진 정보</h4>
-                            <div id="earthquake-list" style="background: white; padding: 15px; border-radius: 5px; border-left: 4px solid #dc3545;">-</div>
-                        </div>
-                        
-                        <!-- 화산 정보 -->
-                        <div class="volcano-section">
-                            <h4>🗻 화산 정보</h4>
-                            <div id="volcano-list" style="background: white; padding: 15px; border-radius: 5px; border-left: 4px solid #fd7e14;">-</div>
-                        </div>
-                    </div>
-                    
                     <div class="disaster-alert">
-                        <div class="alert-level">⚠️ <span data-translate="alert_caution">주의 단계</span></div>
-                        <h3 data-translate="current_alert_status">현재 재난 알림 상태</h3>
-                        <p id="alert-desc">알림 정보를 불러오는 중...</p>
-                    </div>
+					  <div class="alert-level"⚠️> <span data-translate="alert_caution">주의 단계</span></div>
+					  <h3 data-translate="current_alert_status">현재 재난 알림 상태</h3>
+					  <p id="alert-desc">알림 정보를 불러오는 중...</p>
+					</div>
 
                     <div class="disaster-list" id="disaster-list">
-                        <!-- 동적으로 생성됨 -->
-                    </div>
+					  <!-- 지진, 쓰나미 이벤트가 여기에 추가됨 -->
+					</div>
                 </div>
 
                 <div id="facility-section" class="section">
@@ -138,32 +136,17 @@
                     </div>
 
                     <div id="shelter" class="facility-content active">
-                        <div class="facility-list">
-                            <!-- 동적으로 생성됨 -->
-                        </div>
-                    </div>
-
-                    <div id="hospital" class="facility-content">
-                        <div class="facility-list">
-                            <!-- 동적으로 생성됨 -->
-                        </div>
-                    </div>
+					    <div class="facility-list"></div>
+					</div>
+					
+					<div id="hospital" class="facility-content">
+					    <div class="facility-list"></div>
+					</div>
                 </div>
 
                 <div id="history-section" class="section">
                     <h2 class="section-title">📊 <span data-translate="history_title">과거 재난 이력</span></h2>
                     
-                    <!-- DB에서 가져온 실제 재난 이력 표시 영역 -->
-                    <div class="db-history-section" style="background: #f8f9fa; border: 2px solid #e9ecef; border-radius: 8px; padding: 20px; margin-bottom: 20px;">
-                        <h3>📈 실제 재난 이력 (DB)</h3>
-                        <div id="db-history-status" style="font-weight: bold; color: #666; margin-bottom: 10px;">데이터 로딩 중...</div>
-                        <div id="db-history-list" style="background: white; padding: 15px; border-radius: 5px;">
-                            <!-- DB 데이터가 여기에 표시됩니다 -->
-                        </div>
-                    </div>
-                    
-                    <!-- 기존 정적 데이터 (샘플로 유지) -->
-                    <h3>📋 샘플 재난 이력</h3>
                     <div class="history-list">
                         <div class="history-item">
                             <div class="history-header">
@@ -207,31 +190,29 @@
                     <h2 class="section-title">📰 <span data-translate="news_title">관련 뉴스</span></h2>
                     
                     <div class="news-list">
-                        <!-- 동적으로 생성됨 -->
+                        <div class="news-item">
+                            <a href="#" target="_blank">
+                                <div class="news-title" data-translate="news_1_title">[속보] 대전 서구 호우주의보 발령…저지대 침수 주의</div>
+                                <div class="news-summary" data-translate="news_1_summary">
+                                    기상청은 오늘 오후 2시 30분 대전 서구에 호우주의보를 발령했다고 밝혔다. 
+                                    시간당 30mm 이상의 강한 비가 예상되며, 저지대 침수에 각별한 주의가 필요하다고 당부했다.
+                                </div>
+                                <div class="news-meta">
+                                    <span data-translate="daejeon_daily">대전일보</span>
+                                    <span data-translate="30min_ago">30분 전</span>
+                                </div>
+                            </a>
+                        </div>
                     </div>
-                </div>
+               
             </main>
         </div>
     </div>
 </div>
-
 <th:block layout:fragment="script">
-    <!-- 사용자 위치 정보 전달 -->
-    <script th:inline="javascript">
-        window.USER_LOCATION = {
-            address: /*[[${userAddress}]]*/ '東京',
-            latitude: /*[[${userLatitude}]]*/ 35.6895,
-            longitude: /*[[${userLongitude}]]*/ 139.6917
-        };
-        console.log('사용자 위치 정보:', window.USER_LOCATION);
-    </script>
-    
-    <!-- Google Maps API -->
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBdiJWNOl98gTR6XjCfDhubMwXQZVO3ejs&libraries=places&v=weekly" async defer></script>
-    
-    <!-- 통합 jma.js 파일만 로드 -->
-    <script src="/js/detail/jma.js"></script>
+	<script src="/js/detail/jma.js"></script>
 </th:block>
+
 
 </body>
 </html>

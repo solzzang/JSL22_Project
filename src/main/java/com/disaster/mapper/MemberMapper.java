@@ -1,6 +1,7 @@
 package com.disaster.mapper;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -47,4 +48,21 @@ public interface MemberMapper {
     
  // MemberMapper.java에 추가
     MemberAddressDTO findPrimaryAddressByEmail(String email);
+    
+    //전체 회원 정보 조회
+    List<MemberDTO> findByMember();
+    
+    //신규 가입자 조회
+    int countNewMembers();
+    
+    //전체 회원수 조회
+    int totalMemberCount();
+    
+    //회원 삭제
+    int deleteAddressesByMemberId(Long memberId);
+    int deleteMemberById(Long memberId);
+    
+    // 회원 ID로 주소 정보 조회
+    MemberAddressDTO findAddressByMemberId(Long memberId);
+    
 }

@@ -3,6 +3,7 @@ package com.disaster.service;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
@@ -240,4 +241,34 @@ public class MemberService implements UserDetailsService {
         memberMapper.updatePassword(member.getEmail(), encodedPassword);
         memberMapper.clearResetToken(member.getEmail());
     }
+    
+    //ID, 이름, 이메일, 가입일만 조회
+    @Transactional(readOnly = true)
+    public List<MemberDTO> getMemberList(){
+    		return memberMapper.findByMember();
+    }
+    
+    
+    //신규 가입자 조회
+    @Transactional(readOnly = true)
+    public int getNewMemberCount() {
+    		return memberMapper.countNewMembers();
+    	
+    }
+    
+    //전체 가입자 조회
+    @Transactional(readOnly = true)
+    public int getTotalMemberCount() {
+    		return memberMapper.totalMemberCount();
+    }
+    
+    //회원정보 삭제
+    @Transactional
+    public void deleteMember(Long memberId) {
+    		memberMapper.deleteAddressesByMemberId(memberId);
+    		memberMapper.deleteMemberById(memberId);
+    }
+    
+    
+    
 }
