@@ -150,7 +150,7 @@ html, body {
 }
 
 /* 카드 리스트 */
-.card-list a {
+/* .card-list a {
     display: flex;
     align-items: center;
     background-color: var(--white-color);
@@ -162,30 +162,37 @@ html, body {
     color: var(--text-color);
     transition: box-shadow 0.2s ease, transform 0.2s ease;
 }
+
 .card-list a:hover {
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     transform: translateY(-2px);
-}
+} */
 .card-icon { font-size: 32px; margin-right: 20px; width: 40px; text-align: center; }
 .card-content { flex-grow: 1; }
 .card-content h4 { margin: 0 0 5px; font-size: 18px; font-weight: 700; }
 .card-content p { margin: 0; font-size: 14px; color: var(--subtle-text-color); }
-.card-arrow { font-size: 24px; font-weight: bold; color: #D0D0D0; }
 
 /* =========================================================
    푸터
 ========================================================= */
 .footer {
-    background-color: #343A40;
-    color: #ADB5BD;
-    padding: 20px 30px;
-    font-size: 14px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-shrink: 0;
-    border-top: 1px solid #495057;
+  width: 100vw;                                    /* 뷰포트 전체 너비 */
+  margin-left: calc(50% - 50vw);                   /* 왼쪽으로 당겨서 좌측 끝 붙이기 */
+  margin-right: calc(50% - 50vw);                  /* 우측도 동일 */
+  padding-left: clamp(16px, 4vw, 40px);            /* 반응형 좌우 패딩 */
+  padding-right: clamp(16px, 4vw, 40px);
+  background-color: #343A40;
+  color: #ADB5BD;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  font-size: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid #495057;
+  box-sizing: border-box;
 }
+
 .footer a { color: #ADB5BD; text-decoration: none; margin-right: 20px; }
 .footer a:hover { color: var(--white-color); }
 .footer .emergency-contacts span { margin-left: 15px; font-weight: 500; color: #F8F9FA; }
@@ -1134,6 +1141,28 @@ html, body {
   margin-right: 6px;
   vertical-align: middle;
 }
+
+/* ===== 병원 범례 박스 ===== */
+#hospital-info {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  background: #fff;
+  padding: 8px 12px;
+  border-radius: 6px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+  font-size: 14px;
+  line-height: 20px;
+  z-index: 1000;
+}
+
+#hospital-info .info-icon {
+  width: 18px;
+  height: 18px;
+  vertical-align: middle;
+  margin-right: 4px;
+}
+
 
 
 

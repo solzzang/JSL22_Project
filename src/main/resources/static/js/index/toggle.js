@@ -4,6 +4,7 @@ function initMap() {
 	const mapElement = document.getElementById("map");
 	const userLat = mapElement.dataset.lat ? parseFloat(mapElement.dataset.lat) : null;
 	const userLon = mapElement.dataset.lon ? parseFloat(mapElement.dataset.lon) : null;
+	const hospitalToggle = document.getElementById('hospitalToggle');
 
 	const defaultCenter = { lat: 35.68, lng: 139.76 }; // 도쿄
 	const center = (userLat && userLon) ? { lat: userLat, lng: userLon } : defaultCenter;
@@ -58,8 +59,10 @@ document.addEventListener("DOMContentLoaded", () => {
 		hospitalToggle.addEventListener('change', () => {
 			if (hospitalToggle.checked) {
 				HospitalOSMFeature.enable(window._map);
+				window._map.setZoom(15);
 			} else {
 				HospitalOSMFeature.disable();
+				window._map.setZoom(12);
 			}
 		});
 	}
