@@ -227,7 +227,6 @@
       if (!r.ok) { console.warn("[DISASTER] HTTP", r.status, url); return null; }
       if (!ct.includes("application/json")) {
         const txt = await r.text();
-        console.warn("[DISASTER] JSON 아님", ct, url, txt.slice(0, 80));
         return null;
       }
       return await r.json();
@@ -378,7 +377,6 @@
     const out = [];
     for (const code of codes) {
       const url = `${ENDPOINTS_TEST.warningsBase}/${code}.json`;
-      console.log("[WARNINGS][TEST] GET", url);
       try {
         const r = await fetch(url, { headers: { "Accept":"application/json" } });
         if (!r.ok) continue;
@@ -429,7 +427,6 @@
   // 5) 메인 로더
   // =============================================
   async function loadForView() {
-    console.log("[DISASTER] loadForView 실행됨");
 
     clearLayers();
     try {
@@ -438,16 +435,9 @@
         fetchJson(ENDPOINTS.tsunami)
       ]);
 
-      console.log("[DISASTER] 지진 데이터:", quakes);
-      console.log("[DISASTER] 쓰나미 데이터:", tsunami);
-
-      console.time("[WARNINGS] fetch time");
       const warningsArr = TEST_MODE
         ? await fetchWarningsTest()
         : await fetchAllWarnings();
-      console.timeEnd("[WARNINGS] fetch time");
-      console.log("[WARNINGS] count:", warningsArr.length);
-      console.log("[WARNINGS] sample:", warningsArr.slice(0, 3));
 
       // 순서: 경보 라벨 → 지진 아이콘 → 쓰나미 아이콘
       renderWarnings(warningsArr);
@@ -474,11 +464,9 @@
   async function enable(mapInstance) {
     if (mapInstance) window.map = mapInstance; // weather.js 의 initMap에서 넘겨준 map 재사용
     await loadForView();
-    console.log("DisasterFeature enabled");
   }
   function disable() {
     clearLayers();
-    console.log("DisasterFeature disabled");
   }
   window.DisasterFeature = { enable, disable };
 })();
