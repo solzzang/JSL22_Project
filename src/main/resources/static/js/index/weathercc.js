@@ -1,3 +1,4 @@
+// public/js/index/weather.js
 (function () {
   // ============================
   // 1) 공통 유틸 & 이모지 매핑
@@ -23,13 +24,13 @@
   async function getMeLocation() {
       try {
           const j = await fetchJson("/api/me/location");
-          console.log("Weather - API 응답:", j);
+          console.log("API 응답:", j); // 디버깅 로그 추가
           const lat = (typeof j.lat === "number") ? j.lat : 35.681236;
           const lon = (typeof j.lon === "number") ? j.lon : 139.767125;
-          console.log("Weather - 최종 좌표:", lat, lon);
+          console.log("최종 좌표:", lat, lon); // 디버깅 로그 추가
           return { lat, lon, loggedIn: !!j.loggedIn };
       } catch (error) {
-          console.error("Weather - 위치 조회 오류:", error);
+          console.error("위치 조회 오류:", error); // 오류 로그 추가
           return { lat: 35.681236, lon: 139.767125, loggedIn: false };
       }
   }
@@ -90,7 +91,7 @@
     return inLat(lat) && inLng(lon);
   }
 
-  // OverlayView 라벨 생성 함수 (전역 유틸)
+  // 🔹 OverlayView 라벨 생성 함수 (전역 유틸)
   function makeLabel(map, position, text, fontPx = 16, offsetY = "-170%", zIndex = 500) {
     class LabelOverlay extends google.maps.OverlayView {
       constructor(pos, txt, opt) {
@@ -165,7 +166,15 @@
       // 이전 것 정리
       clear();
 
-      // 1) 내 위치 라벨
+      // 1-1) 내 위치 빨간핀 (기본 Marker)
+      userPin = new google.maps.Marker({
+        map: mapRef,
+        position: { lat: userPos.lat, lng: userPos.lon },
+        icon: "http://maps.google.com/mapfiles/ms/icons/red-dot.png",
+        title: `${meData.location.name} / ${meTemp}°C`
+      });
+
+      // 1-2) 내 위치 라벨 (핀보다 위쪽, 가장 위 zIndex)
       userLabel = makeLabel(
         mapRef,
         { lat: userPos.lat, lng: userPos.lon },
@@ -345,5 +354,29 @@
       userPos = { lat: me.lat, lon: me.lon };
       await load();
     }
+  };
+
+  // ============================
+  // 7) Google Maps 콜백
+  // ============================
+  window.initMap = async function () {
+      // 먼저 사용자 위치를 가져온 후 지도 중심점 설정
+      const userLocation = await getMeLocation();
+      console.log("지도 초기화 - 사용자 위치:", userLocation); // 디버깅 로그
+      
+      const map = new google.maps.Map(document.getElementById("map"), {
+        center: { lat: userLocation.lat, lng: userLocation.lon },
+        zoom: 12
+      });
+      console.log("지도 중심점 설정됨:", userLocation.lat, userLocation.lon); // 디버깅 로그
+      
+      window._map = map;
+      
+      // 🔥 자동으로 WeatherFeature 활성화
+      await WeatherFeature.enable(map);
+      
+      // 체크박스도 자동으로 체크 상태로 설정
+      const toggle = document.getElementById('weatherToggle');
+      if (toggle) toggle.checked = true;
   };
 })();

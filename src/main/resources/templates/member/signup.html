@@ -58,6 +58,7 @@
                     </div>
 
                     <!-- === 일본 주소 입력 부분 (수정됨) === -->
+                    <!-- === 일본 주소 입력 부분 (수정됨) === -->
                     
                     <!-- 1단계: 우편번호 입력 -->
                     <div class="form-field">
@@ -86,11 +87,11 @@
                       </div>
                     </div>
 
-                    <!-- 3단계: 상세 주소 입력 -->
+                    <!-- 3단계: 상세 주소 입력 - 필드명 수정 -->
                     <div class="form-field" id="detailAddressField" style="display:none;">
-                      <label for="addrLine2">상세 주소 <span class="req">*</span></label>
+                      <label for="detailAddress">상세 주소 <span class="req">*</span></label>
                       <div class="inline-field">
-                        <input id="addrLine2" name="addrLine2" type="text" 
+                        <input id="detailAddress" name="detailAddress" type="text" 
                                placeholder="번지, 건물명 등 (예: 1-3-1 도쿄빌딩 101호)" required>
                         <button class="btn-outline" type="button" id="btnGetLocation">위치 확인</button>
                       </div>
@@ -149,7 +150,7 @@
   </div>
 
   <!-- Google Maps API 로드 -->
-  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBdiJWNOl98gTR6XjCfDhubMwXQZVO3ejs&callback=initMap"></script>
+  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBdiJWNOl98gTR6XjCfDhubMwXQZVO3ejs&callback=initSignupMap"></script>
   
   <!-- cities.js 파일 로드 -->
   <script src="/js/cities.js"></script>

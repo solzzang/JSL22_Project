@@ -186,80 +186,152 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // 2단계: 기본 주소 정보 표시
-    function displayBasicAddress(addressData) {
-        // 화면에 표시 (읽기 전용 필드)
-        document.getElementById('prefecture').value = addressData.address1;
-        document.getElementById('city').value = addressData.address2;
-        document.getElementById('town').value = addressData.address3 || '';
+	function displayBasicAddress(addressData) {
+	    // 화면에 표시 (읽기 전용 필드)
+	    const prefectureEl = document.getElementById('prefecture');
+	    const cityEl = document.getElementById('city');
+	    const townEl = document.getElementById('town');
+	    
+	    if (prefectureEl) prefectureEl.value = addressData.address1;
+	    if (cityEl) cityEl.value = addressData.address2;
+	    if (townEl) townEl.value = addressData.address3 || '';
 
-        // 숨겨진 필드에 저장 (서버로 전송용)
-        document.getElementById('prefCode').value = addressData.prefcode;
-        document.getElementById('addrLine1').value = addressData.address3 || '';
-        
-        // 시구정촌 코드 찾기
-        const muniCode = findMunicipalityCode(addressData.address1, addressData.address2);
-        document.getElementById('muniCode').value = muniCode;
-    }
+	    // 숨겨진 필드에 저장 (서버로 전송용)
+	    const prefCodeEl = document.getElementById('prefCode');
+	    const addrLine1El = document.getElementById('addrLine1');
+	    
+	    // prefCode 설정 - zipcloud API의 prefcode를 2자리 형식으로 변환
+	    if (prefCodeEl) {
+	        const prefCode = String(addressData.prefcode).padStart(2, '0');
+	        prefCodeEl.value = prefCode;
+	        console.log('PrefCode 설정:', prefCode);
+	    }
+	    
+	    if (addrLine1El) addrLine1El.value = addressData.address3 || '';
+	    
+	    // 시구정촌 코드 찾기
+	    const muniCode = findMunicipalityCode(addressData.address1, addressData.address2);
+	    const muniCodeEl = document.getElementById('muniCode');
+	    if (muniCodeEl) {
+	        muniCodeEl.value = muniCode;
+	        console.log('MuniCode 설정:', muniCode);
+	    }
+	}
 
-    // cities.js에서 시구정촌 코드 찾기
-    function findMunicipalityCode(pref, city) {
-        console.log('찾는 중:', pref, city);
-        
-        if (!window.cities) {
-            console.warn('cities.js가 로드되지 않았습니다');
-            return '';
-        }
-        
-        // 1. 도도부현명 변환 (zipcloud는 "大阪市", cities.js는 "大阪府")
-        let targetPref = pref;
-        if (pref === "大阪市" || city.includes("大阪市")) {
-            targetPref = "大阪府";
-        }
-        
-        // 2. 정확 매칭 시도
-        let found = window.cities.find(item => 
-            item.pref === targetPref && item.city === city
-        );
-        
-        if (found) {
-            console.log('정확 매칭:', found);
-            return found.code;
-        }
-        
-        // 3. 시 단위로 매칭 (구 부분 제거)
-        let cityBase = city;
-        if (city.includes("市")) {
-            // "大阪市東淀川区" → "大阪市"
-            cityBase = city.substring(0, city.indexOf("市") + 1);
-        }
-        
-        found = window.cities.find(item => 
-            item.pref === targetPref && item.city === cityBase
-        );
-        
-        if (found) {
-            console.log('시 단위 매칭:', found);
-            return found.code;
-        }
-        
-        console.warn('매칭 실패:', targetPref, city);
-        return '';
-    }
+	// cities.js에서 시구정촌 코드 찾기 (개선된 버전)
+	    function findMunicipalityCode(pref, city) {
+	        console.log('찾는 중:', pref, city);
+	        
+	        if (!window.cities) {
+	            console.warn('cities.js가 로드되지 않았습니다');
+	            return '';
+	        }
+	        
+	        // 1. 도도부현명 변환
+	        let targetPref = pref;
+	        if (pref === "大阪市" || city.includes("大阪市")) {
+	            targetPref = "大阪府";
+	        }
+	        
+	        // 2. 정확 매칭 시도
+	        let found = window.cities.find(item => 
+	            item.pref === targetPref && item.city === city
+	        );
+	        
+	        if (found) {
+	            console.log('정확 매칭:', found);
+	            return found.code;
+	        }
+	        
+	        // 3. 시 단위로 매칭 (구 부분 제거)
+	        let cityBase = city;
+	        if (city.includes("市")) {
+	            cityBase = city.substring(0, city.indexOf("市") + 1);
+	        }
+	        
+	        found = window.cities.find(item => 
+	            item.pref === targetPref && item.city === cityBase
+	        );
+	        
+	        if (found) {
+	            console.log('시 단위 매칭:', found);
+	            return found.code;
+	        }
+	        
+	        // 4. 군 단위로 매칭 시도 (새로 추가)
+	        if (city.includes("郡")) {
+	            // "磯谷郡蘭越町" → "磯谷郡"
+	            const gunIndex = city.indexOf("郡");
+	            const gunName = city.substring(0, gunIndex + 1);
+	            
+	            found = window.cities.find(item => 
+	                item.pref === targetPref && item.city.startsWith(gunName)
+	            );
+	            
+	            if (found) {
+	                console.log('군 단위 매칭:', found);
+	                return found.code;
+	            }
+	            
+	            // 5. 정목명으로 매칭 시도
+	            const townName = city.substring(gunIndex + 1);
+	            found = window.cities.find(item => 
+	                item.pref === targetPref && item.city === townName
+	            );
+	            
+	            if (found) {
+	                console.log('정목명 매칭:', found);
+	                return found.code;
+	            }
+	        }
+	        
+	        // 6. 부분 매칭 시도 (마지막 수단)
+	        found = window.cities.find(item => 
+	            item.pref === targetPref && 
+	            (item.city.includes(city) || city.includes(item.city))
+	        );
+	        
+	        if (found) {
+	            console.log('부분 매칭:', found);
+	            return found.code;
+	        }
+	        
+	        // 7. 매칭 실패 시 기본값 반환 (북해도의 경우 01)
+	        console.warn('매칭 실패:', targetPref, city);
+	        if (targetPref === "北海道") {
+	            return "01000"; // 북해도 기본 코드
+	        }
+	        return '';
+	    }
 
     // 주소 필드들 표시
     function showAddressFields() {
-        document.getElementById('addressAutoFields').style.display = 'block';
-        document.getElementById('detailAddressField').style.display = 'block';
+        const addressAutoFields = document.getElementById('addressAutoFields');
+        const detailAddressField = document.getElementById('detailAddressField');
+        
+        if (addressAutoFields) addressAutoFields.style.display = 'block';
+        if (detailAddressField) detailAddressField.style.display = 'block';
     }
 
-    // 3단계: 상세 주소로 정확한 위치 확인
+    // 3단계: 상세 주소로 정확한 위치 확인 (수정됨)
     const btnGetLocation = document.getElementById('btnGetLocation');
     if (btnGetLocation) {
         btnGetLocation.addEventListener('click', async function() {
-            const prefecture = document.getElementById('prefecture').value;
-            const city = document.getElementById('city').value;
-            const town = document.getElementById('town').value;
-            const detail = document.getElementById('addrLine2').value.trim();
+            // null 체크 추가
+            const prefectureEl = document.getElementById('prefecture');
+            const cityEl = document.getElementById('city');
+            const townEl = document.getElementById('town');
+            const detailEl = document.getElementById('detailAddress'); // 필드명 수정
+
+            if (!prefectureEl || !cityEl || !townEl || !detailEl) {
+                alert('주소 정보가 완전하지 않습니다. 주소 검색을 다시 해주세요.');
+                return;
+            }
+
+            const prefecture = prefectureEl.value;
+            const city = cityEl.value;
+            const town = townEl.value;
+            const detail = detailEl.value.trim();
 
             if (!detail) {
                 alert('상세 주소를 입력해주세요');
@@ -276,17 +348,23 @@ document.addEventListener('DOMContentLoaded', function() {
                 const coords = await geocodeAddress(fullAddress);
                 
                 if (coords) {
-                    // 최종 데이터 저장 (숨겨진 필드)
-                    document.getElementById('lat').value = coords.lat;
-                    document.getElementById('lon').value = coords.lng;
+                    // 최종 데이터 저장 (숨겨진 필드) - null 체크 추가
+                    const latEl = document.getElementById('lat');
+                    const lonEl = document.getElementById('lon');
+                    
+                    if (latEl) latEl.value = coords.lat;
+                    if (lonEl) lonEl.value = coords.lng;
 
                     // 지도 표시
                     initSignupMap(coords.lat, coords.lng);
-                    document.getElementById('mapField').style.display = 'block';
+                    const mapField = document.getElementById('mapField');
+                    if (mapField) mapField.style.display = 'block';
                     
                     // 좌표 정보 표시
-                    document.getElementById('coordinateInfo').textContent = 
-                        `위도: ${coords.lat.toFixed(6)}, 경도: ${coords.lng.toFixed(6)}`;
+                    const coordInfo = document.getElementById('coordinateInfo');
+                    if (coordInfo) {
+                        coordInfo.textContent = `위도: ${coords.lat.toFixed(6)}, 경도: ${coords.lng.toFixed(6)}`;
+                    }
                 } else {
                     alert('정확한 위치를 찾을 수 없습니다. 주소를 확인해주세요');
                 }
@@ -330,7 +408,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // 4단계: 지도 초기화 (함수명 변경: initMap → initSignupMap)
+    // 4단계: 지도 초기화
     function initSignupMap(lat, lng) {
         if (!window.google || !window.google.maps) {
             console.warn('Google Maps API not loaded');
@@ -338,6 +416,11 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         const mapElement = document.getElementById('map');
+        if (!mapElement) {
+            console.warn('Map element not found');
+            return;
+        }
+
         map = new google.maps.Map(mapElement, {
             center: { lat: lat, lng: lng },
             zoom: 17,
@@ -357,10 +440,15 @@ document.addEventListener('DOMContentLoaded', function() {
             const newLat = position.lat();
             const newLng = position.lng();
             
-            document.getElementById('lat').value = newLat;
-            document.getElementById('lon').value = newLng;
-            document.getElementById('coordinateInfo').textContent = 
-                `위도: ${newLat.toFixed(6)}, 경도: ${newLng.toFixed(6)}`;
+            const latEl = document.getElementById('lat');
+            const lonEl = document.getElementById('lon');
+            const coordInfo = document.getElementById('coordinateInfo');
+            
+            if (latEl) latEl.value = newLat;
+            if (lonEl) lonEl.value = newLng;
+            if (coordInfo) {
+                coordInfo.textContent = `위도: ${newLat.toFixed(6)}, 경도: ${newLng.toFixed(6)}`;
+            }
         });
 
         // 지도 클릭으로 위치 수정
@@ -369,10 +457,15 @@ document.addEventListener('DOMContentLoaded', function() {
             const newLat = e.latLng.lat();
             const newLng = e.latLng.lng();
             
-            document.getElementById('lat').value = newLat;
-            document.getElementById('lon').value = newLng;
-            document.getElementById('coordinateInfo').textContent = 
-                `위도: ${newLat.toFixed(6)}, 경도: ${newLng.toFixed(6)}`;
+            const latEl = document.getElementById('lat');
+            const lonEl = document.getElementById('lon');
+            const coordInfo = document.getElementById('coordinateInfo');
+            
+            if (latEl) latEl.value = newLat;
+            if (lonEl) lonEl.value = newLng;
+            if (coordInfo) {
+                coordInfo.textContent = `위도: ${newLat.toFixed(6)}, 경도: ${newLng.toFixed(6)}`;
+            }
         });
     }
 
@@ -398,13 +491,18 @@ document.addEventListener('DOMContentLoaded', function() {
                 return false;
             }
 
-            // === 일본 주소 데이터 검증 (추가된 부분) ===
-            const postalCode = document.getElementById('postalCode').value;
-            const prefCode = document.getElementById('prefCode').value;
-            const muniCode = document.getElementById('muniCode').value;
-            const addrLine2 = document.getElementById('addrLine2').value;
+            // === 일본 주소 데이터 검증 (수정된 부분) ===
+            const postalCodeEl = document.getElementById('postalCode');
+            const prefCodeEl = document.getElementById('prefCode');
+            const muniCodeEl = document.getElementById('muniCode');
+            const detailAddressEl = document.getElementById('detailAddress'); // 필드명 수정
 
-            if (!postalCode || !prefCode || !muniCode || !addrLine2) {
+            const postalCode = postalCodeEl ? postalCodeEl.value : '';
+            const prefCode = prefCodeEl ? prefCodeEl.value : '';
+            const muniCode = muniCodeEl ? muniCodeEl.value : '';
+            const detailAddress = detailAddressEl ? detailAddressEl.value : '';
+
+            if (!postalCode || !prefCode || !muniCode || !detailAddress) {
                 e.preventDefault();
                 alert('주소 정보를 모두 입력해주세요.');
                 return false;
@@ -420,7 +518,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // 필수 약관 확인
             const agreeTerms = document.getElementById('agreeTerms');
             const agreePrivacy = document.getElementById('agreePrivacy');
-            if (!agreeTerms.checked || !agreePrivacy.checked) {
+            if (!agreeTerms || !agreePrivacy || !agreeTerms.checked || !agreePrivacy.checked) {
                 e.preventDefault();
                 alert('필수 약관에 동의해주세요.');
                 return false;
@@ -449,8 +547,8 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-// Google Maps API 콜백 함수 (전역으로 선언) - 함수명 변경
-function initSignupMapCallback() {
-    // Google Maps API 로드 완료
+// Google Maps API 콜백 함수 (전역으로 선언) - 함수명 수정
+function initSignupMap() {
     console.log('Google Maps API loaded for signup');
+
 }

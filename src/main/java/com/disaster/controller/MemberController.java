@@ -79,6 +79,12 @@ public class MemberController {
     @PostMapping("/signup")
     public String signupProcess(MemberDTO memberDTO, HttpSession session, Model model) {
         try {
+            // === 주소 데이터 매핑 (새로 추가) ===
+            // HTML 폼에서 detailAddress로 받은 값을 addrLine2에 복사
+            if (memberDTO.getDetailAddress() != null && !memberDTO.getDetailAddress().trim().isEmpty()) {
+                memberDTO.setAddrLine2(memberDTO.getDetailAddress().trim());
+            }
+            
             // 1. 기본 필수 값 검증
             if (memberDTO.getEmail() == null || memberDTO.getEmail().trim().isEmpty()) {
                 model.addAttribute("error", "이메일을 입력해주세요.");
@@ -106,44 +112,69 @@ public class MemberController {
                 return "member/signup";
             }
             
-            // === 3. 일본 주소 데이터 검증 (추가된 부분) ===
+         // === 디버깅용 코드 (임시 추가) ===
+            System.out.println("=== 주소 데이터 디버깅 ===");
+            System.out.println("PostalCode: '" + memberDTO.getPostalCode() + "'");
+            System.out.println("PrefCode: '" + memberDTO.getPrefCode() + "'");
+            System.out.println("MuniCode: '" + memberDTO.getMuniCode() + "'");
+            System.out.println("DetailAddress: '" + memberDTO.getDetailAddress() + "'");
+            System.out.println("AddrLine1: '" + memberDTO.getAddrLine1() + "'");
+            System.out.println("AddrLine2: '" + memberDTO.getAddrLine2() + "'");
+            System.out.println("========================");
+            
+            // === 3. 일본 주소 데이터 검증 (수정된 부분) ===
             if (memberDTO.getPostalCode() == null || memberDTO.getPostalCode().trim().isEmpty()) {
                 model.addAttribute("error", "우편번호를 입력해주세요.");
                 return "member/signup";
             }
-            
+
             // 일본 우편번호 형식 검증 (7자리 숫자)
             if (!memberDTO.getPostalCode().matches("\\d{7}")) {
                 model.addAttribute("error", "우편번호는 7자리 숫자로 입력해주세요.");
                 return "member/signup";
             }
-            
+
             if (memberDTO.getPrefCode() == null || memberDTO.getPrefCode().trim().isEmpty()) {
                 model.addAttribute("error", "도도부현 정보가 누락되었습니다. 주소를 다시 검색해주세요.");
                 return "member/signup";
             }
-            
+
+            // 시구정촌 코드가 없는 경우 기본값 설정 (북해도 시골지역 대응)
             if (memberDTO.getMuniCode() == null || memberDTO.getMuniCode().trim().isEmpty()) {
-                model.addAttribute("error", "시구정촌 정보가 누락되었습니다. 주소를 다시 검색해주세요.");
-                return "member/signup";
+                // 북해도인 경우 기본 코드 설정
+                if ("01".equals(memberDTO.getPrefCode())) {
+                    memberDTO.setMuniCode("01000"); // 북해도 기본 코드
+                } else {
+                    model.addAttribute("error", "시구정촌 정보가 누락되었습니다. 주소를 다시 검색해주세요.");
+                    return "member/signup";
+                }
             }
-            
-            if (memberDTO.getAddrLine2() == null || memberDTO.getAddrLine2().trim().isEmpty()) {
+
+            // 상세 주소 검증 - detailAddress 또는 addrLine2 확인
+            String detailAddr = memberDTO.getDetailAddress();
+            if (detailAddr == null || detailAddr.trim().isEmpty()) {
+                detailAddr = memberDTO.getAddrLine2();
+            }
+
+            if (detailAddr == null || detailAddr.trim().isEmpty()) {
                 model.addAttribute("error", "상세 주소를 입력해주세요.");
                 return "member/signup";
             }
-            
+
+            // 최종적으로 addrLine2에 설정
+            memberDTO.setAddrLine2(detailAddr.trim());
+
             // 도도부현 코드 형식 검증 (01-47)
             if (!memberDTO.getPrefCode().matches("^(0[1-9]|[1-4][0-7])$")) {
                 model.addAttribute("error", "올바르지 않은 도도부현 코드입니다.");
                 return "member/signup";
             }
-            
-            // 시구정촌 코드 형식 검증 (5자리 숫자)
-            if (memberDTO.getMuniCode() == null || 
-                memberDTO.getMuniCode().length() < 5 || 
-                memberDTO.getMuniCode().length() > 6 ||
-                !memberDTO.getMuniCode().matches("\\d+")) {
+
+            // 시구정촌 코드 형식 검증 (5자리 숫자) - 수정
+            if (memberDTO.getMuniCode() != null && 
+                (memberDTO.getMuniCode().length() < 5 || 
+                 memberDTO.getMuniCode().length() > 6 ||
+                 !memberDTO.getMuniCode().matches("\\d+"))) {
                 model.addAttribute("error", "올바르지 않은 시구정촌 코드입니다.");
                 return "member/signup";
             }

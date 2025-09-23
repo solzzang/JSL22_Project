@@ -65,4 +65,6 @@ public interface MemberMapper {
     // 회원 ID로 주소 정보 조회
     MemberAddressDTO findAddressByMemberId(Long memberId);
     
+    
+    
 }
