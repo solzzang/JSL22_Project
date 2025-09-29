@@ -60,14 +60,24 @@
   // 1) 이모지 & 아이콘
   // =============================================
   const ALERT_EMOJI = {
-    "大雨警報":"🌧️","大雨注意報":"🌧️🌧️",
-    "洪水警報":"🌊","洪水注意報":"🌊🌊",
-    "強風注意報":"💨💨","暴風注意報":"💨🌪️","暴風警報":"🌬️","暴風雪警報":"🌨️🌪️",
-    "大雪警報":"❄️","大雪注意報":"❄️❄️",
-    "低温注意報":"🥶",
-    "熱中症警戒アラート":"🔥🌡️","猛暑日情報":"🔥",
-    "濃霧注意報":"🌫️","黄砂情報":"🟨",
-    "雷注意報":"⚡⚡","乾燥注意報":"🔥🔥","紫外線情報":"☀️🕶️"
+	"大雨警報": '<i class="bi bi-cloud-rain-heavy-fill"></i>',
+	"大雨注意報": '<i class="bi bi-cloud-rain-fill"></i>',
+	"洪水警報": '<i class="bi bi-droplet-fill"></i>',
+	"洪水注意報": '<i class="bi bi-droplet"></i>',
+	"強風注意報": '<i class="bi bi-wind"></i>',
+	"暴風注意報": '<i class="bi bi-wind"></i><i class="bi bi-cloud"></i>',
+	"暴風警報": '<i class="bi bi-wind"></i>',
+	"暴風雪警報": '<i class="bi bi-snow"></i>',
+	"大雪警報": '<i class="bi bi-snow"></i>',
+	"大雪注意報": '<i class="bi bi-snow"></i>',
+	"低温注意報": '<i class="bi bi-thermometer-snow"></i>',
+	"熱中症警戒アラート": '<i class="bi bi-thermometer-sun"></i>',
+	"猛暑日情報": '<i class="bi bi-brightness-high-fill"></i>',
+	"濃霧注意報": '<i class="bi bi-cloud-fog2-fill"></i>',
+	"黄砂情報": '<i class="bi bi-cloud-haze2-fill"></i>',
+	"雷注意報": '<i class="bi bi-lightning-fill"></i>',
+	"乾燥注意報": '<i class="bi bi-brightness-high"></i>',
+	"紫外線情報": '<i class="bi bi-sunglasses"></i>'
   };
 
   function getAlertEmoji(alert) {
@@ -274,9 +284,12 @@
   // 3) 렌더: 지진 (검은 배경 + 이미지)
   // =============================================
   function renderQuakes(data) {
+    if (!data) return;
+
     const list = Array.isArray(data)
       ? data
       : (data?.type === "FeatureCollection" ? (data.features || []) : []);
+
     if (!list.length) return;
 
     list.forEach(f => {
@@ -292,8 +305,8 @@
         { lat: coords.lat, lng: coords.lon },
         getDisasterIconUrl("earthquake"),
         32,
-        620,      // zIndex
-        "-50%"    // 세로 위치
+        620,
+        "-50%"
       );
       $S.quakeMarkers.push(iconOverlay);
 
@@ -309,7 +322,6 @@
           ${p.url ? `<div><a href="${p.url}" target="_blank">詳細</a></div>` : ""}
         </div>`;
 
-      // Overlay 클릭으로 InfoWindow 띄우기
       iconOverlay.onAdd = (function (orig) {
         return function () {
           orig.call(iconOverlay);
@@ -340,7 +352,7 @@
 
       (ev.areas || []).forEach(a => {
         const name = a.name || "津波";
-        const grade = a.grade || ""; // MajorWarning / Warning / Watch 등
+        const grade = a.grade || "";
 
         if (ul) {
           const li = document.createElement("li");
@@ -375,8 +387,10 @@
   async function fetchWarningsTest() {
     const codes = ["130000","270000","260000"];
     const out = [];
+    const BASE = "/mock/warningsBase";
+
     for (const code of codes) {
-      const url = `${ENDPOINTS_TEST.warningsBase}/${code}.json`;
+      const url = `${BASE}/${code}.json?_=${Date.now()}`;
       try {
         const r = await fetch(url, { headers: { "Accept":"application/json" } });
         if (!r.ok) continue;
@@ -408,7 +422,7 @@
     (items || []).forEach(a => {
       const emo = getAlertEmoji(a);
       const prefCode = toPrefCode(a.areaCode);
-      const pref = (window.cities || []).find(c => c.code === prefCode);
+      const pref = (window.cities || []).find(c => String(c.code) === String(prefCode));
       if (!pref || !window.map) return;
 
       const lbl = makeLabel(
@@ -462,7 +476,7 @@
   // 6) export (토글 제어)
   // =============================================
   async function enable(mapInstance) {
-    if (mapInstance) window.map = mapInstance; // weather.js 의 initMap에서 넘겨준 map 재사용
+    if (mapInstance) window.map = mapInstance;
     await loadForView();
   }
   function disable() {

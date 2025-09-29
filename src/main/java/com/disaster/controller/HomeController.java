@@ -1,6 +1,6 @@
 package com.disaster.controller;
 
-import com.disaster.domain.userDto;
+import com.disaster.domain.MemberDTO;
 import com.disaster.service.indexService;
 
 import lombok.RequiredArgsConstructor;
@@ -33,11 +33,12 @@ public class HomeController {
         res.put("lon", 139.767125);
 
         if (principal != null) {
-            userDto addr = indexService.getPrimaryAddress(principal.getName());
+            MemberDTO addr = indexService.getPrimaryAddress(principal.getName());
             if (addr != null) {
                 res.put("loggedIn", true);
                 res.put("lat", addr.getLat());
                 res.put("lon", addr.getLon());
+                res.put("email", addr.getEmail());
             }
         }
         return res;
