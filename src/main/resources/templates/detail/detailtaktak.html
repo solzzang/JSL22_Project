@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}">
+<div layout:fragment="content">
+    <div class="page-detail">
+        <div class="main-content">
+            <main class="content-area">
+                <div class="region-header">
+                <div class="region-header-top">
+                        <h1>🏙️ <span id="regionName" data-translate="region_daejeon">대전광역시</span></h1>
+                        <div class="region-search">
+                            <input type="text" id="regionSearchInput" data-translate-placeholder="search_placeholder" placeholder="지역명을 입력하세요" />
+                            <button onclick="searchRegion()">🔍 <span data-translate="search_btn">검색</span></button>
+                            </div>
+                    </div>
+                    <p data-translate="header_description">실시간 재난 안전 정보 및 대응 현황을 확인하세요</p>
+                </div>
+
+                <div class="navigation-bar">
+                    <div class="nav-menu">
+                        <a href="#weather-section" class="nav-item" onclick="scrollToSection('weather-section', this)">
+                            🌤️ <span data-translate="nav_weather">날씨 정보</span>
+                        </a>
+                        <a href="#disaster-section" class="nav-item" onclick="scrollToSection('disaster-section', this)">
+                            🚨 <span data-translate="nav_disaster">재난 정보</span>
+                        </a>
+                        <a href="#facility-section" class="nav-item" onclick="scrollToSection('facility-section', this)">
+                            🏥 <span data-translate="nav_facility">시설 정보</span>
+                        </a>
+                        <a href="#history-section" class="nav-item" onclick="scrollToSection('history-section', this)">
+                            📊 <span data-translate="nav_history">재난 이력</span>
+                        </a>
+                        <a href="#news-section" class="nav-item" onclick="scrollToSection('news-section', this)">
+                            📰 <span data-translate="nav_news">관련 뉴스</span>
+                        </a>
+                    </div>
+                </div>
+
+                <div id="weather-section" class="section">
+                    <h2 class="section-title">🌤️ <span data-translate="weather_title">날씨 정보</span></h2>
+                    
+                    <div class="weather-overview">
+                        <div class="weather-card">
+                            <div class="icon">☀️</div>
+                            <div class="temp" id="currentTemp" >zz</div>
+                            <div class="desc" id="currentWeather" data-translate="weather_sunny">맑음</div>
+                        </div>
+                    </div>
+                    
+                    <div class="weather-details">
+                    		<div class="weather-detail-item">
+                            <div class="label" data-translate="wind_speed">바람</div>
+                            <div class="value">65%</div>
+                        </div>
+                        <div class="weather-detail-item">
+                            <div class="label" data-translate="humidity">습도</div>
+                            <div class="value">3.2m/s</div>
+                        </div>
+                        <div class="weather-detail-item">
+                            <div class="label" data-translate="uv_index">자외선</div>
+                            <div class="value">3.2m/s</div>
+                        </div>
+                        
+                    </div>
+
+                    <div class="forecast-tabs">
+                        <div class="forecast-tab active" onclick="showForecast('hourly', this)">
+                            <span data-translate="hourly_forecast">오늘 예보</span>
+                        </div>
+                        <div class="forecast-tab" onclick="showForecast('daily', this)">
+                            <span data-translate="daily_forecast">주간 예보</span>
+                        </div>
+                        <div class="forecast-tab" onclick="showForecast('warning', this)">
+                            <span data-translate="weather_warning">기상 특보</span>
+                        </div>
+                    </div>
+
+                    <div id="hourly" class="forecast-content active">
+                        <div class="hourly-forecast">
+                        
+                        <div class="forecast-item">
+                                <div class="time">14:00</div>
+                                <div class="icon">☀️</div>
+                                <div class="temp">23°C</div>
+                            </div> 
+                        </div>
+                    </div>
+
+                    <div id="daily" class="forecast-content">
+                        <div class="daily-forecast">
+                        <div class="forecast-item">
+                                <div class="time" data-translate="today">오늘</div>
+                                <div class="icon">☀️</div>
+                                <div class="temp">23°/15°C</div>
+                            </div>
+                           
+                           
+                        </div>
+                    </div>
+
+                    <div id="warning" class="forecast-content">
+                    		<div class="disaster-item warning">
+                            <div class="disaster-header">
+                                <div class="disaster-type">🌧️ <span data-translate="rain_warning">호우주의보</span></div>
+                                <div class="disaster-time">2025.09.03 14:30</div>
+                            </div>
+                            <p data-translate="rain_warning_desc">시간당 30mm 이상의 강한 비가 예상됩니다. 저지대 침수에 주의하시기 바랍니다.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="disaster-section" class="section">
+                    <h2 class="section-title">🚨 <span data-translate="disaster_title">재난 정보</span></h2>
+                    <div class="disaster-alert">
+					  <div class="alert-level"⚠️> <span data-translate="alert_caution">주의 단계</span></div>
+					  <h3 data-translate="current_alert_status">현재 재난 알림 상태</h3>
+					  <p id="alert-desc">알림 정보를 불러오는 중...</p>
+					</div>
+
+                    <div class="disaster-list" id="disaster-list">
+					  <!-- 지진, 쓰나미 이벤트가 여기에 추가됨 -->
+					</div>
+                </div>
+
+                <div id="facility-section" class="section">
+                    <h2 class="section-title">🏥 <span data-translate="facility_title">시설 정보</span></h2>
+                    
+                    <div class="facility-tabs">
+                        <div class="facility-tab active" onclick="showFacility('shelter', this)">
+                            <span data-translate="shelter">대피소</span>
+                        </div>
+                        <div class="facility-tab" onclick="showFacility('hospital', this)">
+                            <span data-translate="hospital">병원</span>
+                        </div>
+                    </div>
+
+                    <div id="shelter" class="facility-content active">
+					    <div class="facility-list"></div>
+					</div>
+					
+					<div id="hospital" class="facility-content">
+					    <div class="facility-list"></div>
+					</div>
+                </div>
+
+                <div id="history-section" class="section">
+                    <h2 class="section-title">📊 <span data-translate="history_title">과거 재난 이력</span></h2>
+                    
+                    <div class="history-list">
+                        <div class="history-item">
+                            <div class="history-header">
+                                <div class="history-title">🌊 <span data-translate="flood_2024">2024년 집중호우 피해</span></div>
+                                <div class="history-date">2024.07.15</div>
+                            </div>
+                            <div class="history-content" data-translate="flood_2024_desc">
+                                시간당 80mm의 집중호우로 서구 둔산동 일대 침수 피해 발생. 
+                                이재민 50여 명 발생, 차량 침수 30대. 
+                                신속한 대피소 운영으로 인명피해 최소화.
+                            </div>
+                        </div>
+                        
+                        <div class="history-item">
+                            <div class="history-header">
+                                <div class="history-title">💨 <span data-translate="typhoon_2023">2023년 태풍 힌남노</span></div>
+                                <div class="history-date">2023.09.05</div>
+                            </div>
+                            <div class="history-content" data-translate="typhoon_2023_desc">
+                                태풍 힌남노 영향으로 최대풍속 25m/s 강풍. 
+                                가로수 넘어짐 15건, 정전 3시간 지속. 
+                                사전 대피 조치로 인명피해 없음.
+                            </div>
+                        </div>
+
+                        <div class="history-item">
+                            <div class="history-header">
+                                <div class="history-title">🔥 <span data-translate="fire_2022">2022년 산불 발생</span></div>
+                                <div class="history-date">2022.04.08</div>
+                            </div>
+                            <div class="history-content" data-translate="fire_2022_desc">
+                                동구 산림지역 소규모 산불 발생. 
+                                산림 5ha 소실, 2시간 만에 완전 진화. 
+                                주민 대피 없이 신속 대응 완료.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="news-section" class="section">
+                    <h2 class="section-title">📰 <span data-translate="news_title">관련 뉴스</span></h2>
+                    
+                    <div class="news-list">
+                        <div class="news-item">
+                            <a href="#" target="_blank">
+                                <div class="news-title" data-translate="news_1_title">[속보] 대전 서구 호우주의보 발령…저지대 침수 주의</div>
+                                <div class="news-summary" data-translate="news_1_summary">
+                                    기상청은 오늘 오후 2시 30분 대전 서구에 호우주의보를 발령했다고 밝혔다. 
+                                    시간당 30mm 이상의 강한 비가 예상되며, 저지대 침수에 각별한 주의가 필요하다고 당부했다.
+                                </div>
+                                <div class="news-meta">
+                                    <span data-translate="daejeon_daily">대전일보</span>
+                                    <span data-translate="30min_ago">30분 전</span>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+               
+            </main>
+        </div>
+    </div>
+</div>
+<th:block layout:fragment="script">
+	<script src="/js/detail/jma.js"></script>
+</th:block>
+
+
+</body>
+</html>
