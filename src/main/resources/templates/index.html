@@ -10,6 +10,7 @@
 				<h2 class="sidebar-title">カテゴリー</h2>
 				<div class="filter-group">
 					<label><input type="checkbox" id="weatherToggle"> 天気情報</label> <label><input
+<<<<<<< HEAD
 						type="checkbox" id="disasterToggle"> 災害情報</label> <label><input
 						type="checkbox" id="shelterToggle"> 避難所情報</label> <label><input
 						type="checkbox" id="hospitalToggle"> 病院情報</label>
@@ -88,5 +89,67 @@
 	<!-- <script src="/js/index/allShelters.js"></script> --> <!-- 모든 대피소 표시 -->
 	<script src="/js/index/hospitals.js"></script>
 	<script src="/js/index/toggle.js"></script>
+=======
+						type="checkbox"> 災害情報</label> <label><input
+						type="checkbox"> 避難所情報</label> <label><input
+						type="checkbox"> 病院情報</label>
+				</div>
+			</aside>
+
+			<main class="content-area">
+				<!-- 지도 영역 -->
+				<section class="map-section">
+					<div id="map" class="map-canvas"></div>
+				</section>
+
+				<h2 class="section-title">현재 지역 상세 정보</h2>
+				<div class="card-list">
+					<a href="#">
+						<div class="card-icon">🗺️</div>
+						<div class="card-content">
+							<h4>주변 대피소 목록</h4>
+							<p>현재 위치에서 가장 가까운 대피소를 확인하고 경로를 안내합니다.</p>
+						</div>
+						<div class="card-arrow">&gt;</div>
+					</a> <a href="#">
+						<div class="card-icon">📰</div>
+						<div class="card-content">
+							<h4>최신 재난 뉴스</h4>
+							<p>현재 지역과 관련된 최신 재난 속보 및 안전 문자를 확인합니다.</p>
+						</div>
+						<div class="card-arrow">&gt;</div>
+					</a> <a href="#">
+						<div class="card-icon">🎒</div>
+						<div class="card-content">
+							<h4>상황별 행동 요령</h4>
+							<p>지진, 태풍, 화재 등 현재 상황에 맞는 행동 요령을 안내합니다.</p>
+						</div>
+						<div class="card-arrow">&gt;</div>
+					</a>
+				</div>
+			</main>
+		</div>
+	</div>
+</div>
+
+<th:block layout:fragment="script">
+	<script src="/js/cities.js"></script>
+	<script src="/js/index/weather.js"></script>
+	<script
+	  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBdiJWNOl98gTR6XjCfDhubMwXQZVO3ejs&callback=initMap&libraries=marker&v=weekly"
+	  async defer>
+	</script>
+	<script>
+	  const toggle = document.getElementById('weatherToggle');
+	  let map; 
+	  toggle.addEventListener('change', () => {
+	    if (toggle.checked) {
+	      WeatherFeature.enable(window._map);
+	    } else {
+	      WeatherFeature.disable();
+	    }
+	  });
+	</script>
+>>>>>>> refs/remotes/origin/승범
 </th:block>
 </html>

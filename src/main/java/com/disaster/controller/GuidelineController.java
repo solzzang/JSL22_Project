@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class GuidelineController {
     
 <<<<<<< HEAD
+<<<<<<< HEAD
     @GetMapping
 =======
     @GetMapping("")
@@ -16,4 +17,46 @@ public class GuidelineController {
     public String guidelines() {
         return "guidelines/guideLine"; // templates/guidelines/index.html
     }
+=======
+    @GetMapping("/guide")
+    public String guidelines() {
+        return "guidelines/guideLine"; // templates/guidelines/index.html
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+>>>>>>> refs/remotes/origin/승범
 }

@@ -3,6 +3,7 @@ package com.disaster.domain;
 import lombok.Data;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+<<<<<<< HEAD
 
 @Data
 public class MemberDTO {
@@ -58,6 +59,64 @@ public class MemberDTO {
     }
     
     public void setResetTokenExpires(Timestamp resetTokenExpires) { 
+=======
+import java.time.LocalDateTime;
+
+@Data
+public class MemberDTO {
+
+    // member 테이블 필드들
+    private Long memberId; // member_id
+    private String email; // email (로그인 아이디)
+    private String passwordHash; // password_hash
+    private String name; // name (실명)
+    private String nickname; // nickname (닉네임) - DB 컬럼 추가
+    private String phone; // phone
+    private String lineUserId; // line_user_id
+    private String role; // role (USER/ADMIN)
+    private Boolean isActive; // is_active
+    private Boolean marketingConsent; // marketing_consent
+    private LocalDateTime termsAgreedAt; // terms_agreed_at
+    private LocalDateTime privacyAgreedAt; // privacy_agreed_at
+    private LocalDateTime createdAt; // created_at
+    private LocalDateTime updatedAt; // updated_at
+
+    // HTML 폼에서만 사용하는 필드들 (DB 저장 안함)
+    private String password; // 평문 비밀번호 (해싱 전)
+    private String password2; // 비밀번호 확인
+    private String verifyCode; // 인증코드 (세션 처리)
+
+    // === 일본 주소 관련 필드들 (MemberAddressDTO와 일치하게 수정) ===
+    
+    // HTML 폼에서 받는 필드들
+    private String postalCode; // postal_code (우편번호 7자리)
+    private String prefecture; // 도도부현명 (표시용)
+    private String city; // 시구정촌명 (표시용)
+    private String town; // 정목명 (표시용)
+    private String detailAddress; // 상세주소
+
+    // DB 저장용 필드들 (MemberAddressDTO와 정확히 일치)
+    private String prefCode; // pref_code (도도부현 코드 2자리)
+    private String muniCode; // muni_code (시구정촌 코드 5자리)
+    private String addrLine1; // addr_line1 (정목)
+    private String addrLine2; // addr_line2 (상세주소)
+    private BigDecimal lat; // lat (위도)
+    private BigDecimal lon; // lon (경도)
+
+    // 약관 동의 관련
+    private Boolean agreeTerms; // 이용약관 동의
+    private Boolean agreePrivacy; // 개인정보처리방침 동의
+    private Boolean agreeMarketing; // 마케팅 수신 동의
+
+    private LocalDateTime resetTokenExpires; // reset_token_expires
+
+    // getter/setter
+    public LocalDateTime getResetTokenExpires() { 
+        return resetTokenExpires; 
+    }
+    
+    public void setResetTokenExpires(LocalDateTime resetTokenExpires) { 
+>>>>>>> refs/remotes/origin/승범
         this.resetTokenExpires = resetTokenExpires; 
     }
 

@@ -1,5 +1,6 @@
 package com.disaster.service;
 
+<<<<<<< HEAD
 import java.util.List;
 import org.springframework.stereotype.Service;
 
@@ -36,3 +37,20 @@ public class indexService {
     }
 }
 >>>>>>> refs/remotes/origin/킹줴지우지
+=======
+import org.springframework.stereotype.Service;
+import com.disaster.domain.MemberAddressDTO;
+import com.disaster.mapper.indexMapper;
+import lombok.RequiredArgsConstructor;
+
+@Service
+@RequiredArgsConstructor
+public class indexService {
+
+    private final indexMapper indexMapper; // MemberMapper 대신 indexMapper 사용
+
+    public MemberAddressDTO getPrimaryAddress(String username) {
+        return indexMapper.findPrimaryAddressByEmail(username);
+    }
+}
+>>>>>>> refs/remotes/origin/승범

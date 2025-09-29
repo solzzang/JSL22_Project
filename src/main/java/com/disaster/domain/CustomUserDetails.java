@@ -1,5 +1,6 @@
 package com.disaster.domain;
 
+<<<<<<< HEAD
 import java.util.Collection;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,6 +23,35 @@ public class CustomUserDetails implements UserDetails {
     }
     
     // UserDetails 인터페이스 구현
+=======
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import java.util.Collection;
+
+public class CustomUserDetails implements UserDetails {
+    
+	private final Long memberId;
+    private String email;
+    private String password;
+    private String nickname;
+    private boolean enabled;
+    private Collection<? extends GrantedAuthority> authorities;
+    
+    public CustomUserDetails(Long memberId, String email, String password, String nickname, 
+                           boolean enabled, Collection<? extends GrantedAuthority> authorities) {
+    	this.memberId = memberId;
+    	this.email = email;
+        this.password = password;
+        this.nickname = nickname;
+        this.enabled = enabled;
+        this.authorities = authorities;
+    }
+    
+    // UserDetails 인터페이스 구현
+    public Long getMemberId() { return memberId; }
+    
+>>>>>>> refs/remotes/origin/승범
     @Override
     public String getUsername() { return email; }
     
