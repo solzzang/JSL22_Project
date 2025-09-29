@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.disaster.mapper.CommunityMapper">
+
+    <!-- 전체 게시글 수 -->
+    <select id="getTotalPostCount" resultType="int">
+        SELECT COUNT(*)
+        FROM post
+        WHERE status != 'DELETED'
+    </select>
+		
+    <!-- 전체 댓글 수 -->
+    <select id="getTotalCommentCount" resultType="int">
+        SELECT COUNT(*)
+        FROM comment
+        WHERE status != 'DELETED'
+    </select>
+
+    <!-- 게시글 조회용 ResultMap (CommunityDTO 사용) -->
+    <resultMap id="postDetailMap" type="com.disaster.domain.CommunityDTO">
+        <id property="postId" column="post_id"/>
+        <result property="memberId" column="member_id"/>
+        <result property="addressId" column="address_id"/>
+        <result property="muniCode" column="muni_code"/>
+        <result property="disasterType" column="disaster_type"/>
+        <result property="title" column="title"/>
+        <result property="body" column="body"/>
+        <result property="lat" column="lat"/>
+        <result property="lon" column="lon"/>
+        <result property="status" column="status"/>
+        <result property="viewCount" column="view_count"/>
+        <result property="createdAt" column="created_at" />
+        <result property="updatedAt" column="updated_at" />
+        <result property="nickname" column="nickname"/>
+    </resultMap>
+
+    <!-- 댓글 조회용 ResultMap (CommentDTO 사용) -->
+    <resultMap id="reportedCommentMap" type="com.disaster.domain.CommentDTO">
+        <id property="commentId" column="comment_id"/>
+        <result property="postId" column="post_id"/>
+        <result property="memberId" column="member_id"/>
+        <result property="body" column="body"/>
+        <result property="status" column="status"/>
+        <result property="createdAt" column="created_at" />
+        <result property="nickname" column="nickname"/>
+        <result property="title" column="title"/>
+    </resultMap>
+	
+	
+	
+	
+    <!-- 게시글 조회 (검색/페이징/정렬 포함) -->
+    <select id="findPostsForAdmin" resultMap="postDetailMap" parameterType="map">
+        SELECT
+            p.post_id, p.member_id, p.address_id, p.muni_code, p.disaster_type,
+            p.title, p.body, p.lat, p.lon, p.status, p.view_count,
+            p.created_at, p.updated_at, m.nickname
+        FROM
+            post p
+        JOIN
+            member m ON p.member_id = m.member_id
+        WHERE
+            p.status != 'DELETED'
+        ORDER BY
+            p.status DESC,
+            p.created_at DESC
+        LIMIT #{pageSize} OFFSET #{offset}
+    </select>
+	
+	
+    <!-- 신고된 댓글만 조회 (페이징 적용) -->
+    <select id="findReportedCommentsPaginated" resultType="com.disaster.domain.CommentDTO">
+        SELECT
+            DISTINCT c.comment_id, c.post_id, c.member_id, c.body, c.status,
+            c.created_at, m.nickname, p.title
+        FROM
+            comment c
+        JOIN
+            comment_report cr ON c.comment_id = cr.comment_id
+        JOIN
+            member m ON c.member_id = m.member_id
+        JOIN
+            post p ON c.post_id = p.post_id
+        ORDER BY
+            c.created_at DESC
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+    
+    <!-- 신고된 댓글 전체 개수 조회 -->
+    <select id="countReportedComments" resultType="int">
+        SELECT COUNT(DISTINCT c.comment_id)
+        FROM comment c
+        JOIN comment_report cr ON c.comment_id = cr.comment_id
+    </select>
+    
+    
+
+    <!-- 게시글 소프트 삭제 -->
+    <update id="softDeletePostById" parameterType="long">
+        UPDATE post
+        SET status = 'DELETED'
+        WHERE post_id = #{postId}
+    </update>
+
+    <!-- 댓글 소프트 삭제 -->
+    <update id="softDeleteCommentById" parameterType="long">
+        UPDATE comment
+        SET status = 'DELETED'
+        WHERE comment_id = #{commentId}
+    </update>
+    
+    
+    <!-- 소프트 삭제된 게시물 조회 (페이징 적용) -->
+    <select id="findSoftDeletedPostsPaginated" resultType="com.disaster.domain.CommunityDTO">
+        SELECT
+            p.post_id,
+            p.title,
+            p.status,
+            p.created_at,
+            m.nickname,
+            (SELECT pr.reason FROM post_report pr
+             WHERE pr.post_id = p.post_id
+             ORDER BY pr.created_at DESC LIMIT 1) AS reportReason
+        FROM
+            post p
+        JOIN
+            member m ON p.member_id = m.member_id
+        WHERE
+            p.status = 'DELETED'
+        ORDER BY
+            p.updated_at DESC
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <!-- 소프트 삭제된 게시물 전체 개수 조회 -->
+    <select id="countSoftDeletedPosts" resultType="int">
+        SELECT COUNT(*)
+        FROM post p
+        WHERE p.status = 'DELETED'
+    </select>
+
+<!-- 소프트 삭제된 댓글 조회 (페이징 적용) -->
+    <select id="findSoftDeletedCommentsPaginated" resultType="com.disaster.domain.CommentDTO">
+        SELECT
+            c.comment_id,
+            c.body,
+            c.status,
+            c.created_at,
+            m.nickname,
+            p.title,
+            p.post_id,
+            (SELECT cr.reason FROM comment_report cr
+             WHERE cr.comment_id = c.comment_id
+             ORDER BY cr.created_at DESC LIMIT 1) AS reportReason
+        FROM
+            comment c
+        JOIN
+            member m ON c.member_id = m.member_id
+        JOIN
+            post p ON c.post_id = p.post_id
+        WHERE
+            c.status = 'DELETED'
+        ORDER BY
+            c.updated_at DESC
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+    
+    <!-- 소프트 삭제된 댓글 전체 개수 조회 -->
+    <select id="countSoftDeletedComments" resultType="int">
+        SELECT COUNT(*) 
+        FROM comment c
+        WHERE c.status = 'DELETED'
+    </select>
+    
+    
+    <!-- 완전삭제 -->
+    <delete id="hardDeletePostById" parameterType="long">
+    DELETE FROM post
+    WHERE post_id = #{postId}
+	</delete>
+
+	<delete id="hardDeleteCommentById" parameterType="long">
+	    DELETE FROM comment
+	    WHERE comment_id = #{commentId}
+	</delete>
+    
+    
+    
+    
+    
+    
+
+</mapper>
