@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/guidelines")
 public class GuidelineController {
     
-    @GetMapping("")
+    @GetMapping
     public String guidelines() {
         return "guidelines/guideLine"; // templates/guidelines/index.html
     }
