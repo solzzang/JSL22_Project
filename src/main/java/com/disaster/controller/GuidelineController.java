@@ -8,8 +8,55 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/guidelines")
 public class GuidelineController {
     
+<<<<<<< HEAD
+<<<<<<< HEAD
+    @GetMapping
+=======
     @GetMapping("")
+>>>>>>> refs/remotes/origin/킹줴지우지
     public String guidelines() {
         return "guidelines/guideLine"; // templates/guidelines/index.html
     }
+=======
+    @GetMapping("/guide")
+    public String guidelines() {
+        return "guidelines/guideLine"; // templates/guidelines/index.html
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+>>>>>>> refs/remotes/origin/승범
 }
